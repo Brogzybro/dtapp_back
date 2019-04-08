@@ -14,3 +14,10 @@ exports.update = async(ctx) => {
   await user.save();
   ctx.status = 200;
 };
+
+// Get token
+exports.token = async(ctx) => {
+  const { user } = ctx.state;
+  const { token } = await user.generateToken();
+  ctx.body = { token };
+};

@@ -8,6 +8,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "agenda": "^2.0.2",
     "basic-auth": "^2.0.1",
     "bcrypt": "^3.0.5",
     "dateformat": "^3.0.3",
@@ -17,7 +18,9 @@
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "mongoose": "^5.4.20",
-    "superagent": "^4.1.0"
+    "ms": "^2.1.1",
+    "superagent": "^4.1.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "eslint": "^5.16.0",

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
+const Token = require('./Token');
 
 const User = new Schema({
   username: {
@@ -38,6 +39,18 @@ User.pre('validate', async function() {
 // Authenticate user
 User.method('authenticate', function(password) {
   return bcrypt.compare(password, this.passwordHash);
+});
+
+// Generate temporary token
+User.method('generateToken', async function() {
+  const token = await Token.create({ user: this.id });
+  return token;
+});
+
+// Find by token
+User.static('findByToken', async function(token) {
+  const found = await Token.findOne({ token }).populate('user');
+  if (found) return found.user;
 });
 
 module.exports = mongoose.model('User', User);
