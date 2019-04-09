@@ -40,25 +40,35 @@ async function syncActivity(endpoint, activity) {
       .where('source').eq('fitbit')
       .sort({ startDate: -1 });
 
-    // Limit to 24 hours ago (to account for time ambiguity in API response)
-    if (last && end.valueOf() - last.startDate.valueOf() < ms('24h')) {
-      start = last.startDate;
+    // Limit to 23 hours ago to account for time ambiguity in API response
+    // TODO: Make multiple API requests instead
+    if (last && end.valueOf() - last.startDate.valueOf() < ms('23h')) {
+      start = new Date(last.startDate);
     } else {
-      // Last 24 hours
-      start = new Date(end.valueOf() - ms('23h') - ms('59m'));
+      // Last 23 hours
+      start = new Date(end.valueOf() - ms('23h'));
     }
+
+    // Fitbit API only has minute granularity
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+
+    // Make sure all returned values are included in the range
+    end.setMinutes(end.getMinutes() + 1);
+    end.setSeconds(0);
+    end.setMilliseconds(0);
 
     const results = await fitbit.activityTimeSeries(endpoint, user, start, end, granularity);
     const dataset = results[`activities-${endpoint}-intraday`].dataset;
     const samples = [];
 
     for (let { time, value } of dataset) {
-      const date = new Date(`${format(start, 'yyyy-mm-dd')} ${time}`);
+      const date = new Date(`${format(end, 'yyyy-mm-dd')} ${time}`);
 
       // Set correct date in case data spans two days
       // TODO: Account for user's UTC offset
-      if (date < start) {
-        date.setDate(end.getDate());
+      if (date > end) {
+        date.setDate(start.getDate());
       }
 
       // Skip useless values

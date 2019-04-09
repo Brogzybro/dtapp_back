@@ -15,16 +15,3 @@ exports.callback = async(ctx) => {
   await fitbit.callback(user, code);
   ctx.redirect('healthscraper://callback');
 };
-
-exports.heartrate = async(ctx) => {
-  const { user } = ctx.state;
-  const start = new Date('2018-12-09 23:00');
-  const end = new Date('2018-12-10 01:00');
-  ctx.body = await fitbit.heartRate(user, start, end);
-};
-
-exports.sleep = async(ctx) => {
-  const { user } = ctx.state;
-  const after = new Date('2018-01-01 23:00');
-  ctx.body = await fitbit.sleep(user, after);
-};

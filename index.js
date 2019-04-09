@@ -31,10 +31,6 @@ router.post('/healthkit', auth, healthkit.sync);
 router.get('/fitbit/auth', fitbit.auth);
 router.get('/fitbit/callback', fitbit.callback);
 
-// TODO: Remove this
-router.get('/fitbit/heartrate', auth, fitbit.heartrate);
-router.get('/fitbit/sleep', auth, fitbit.sleep);
-
 app.use(logger());
 app.use(errors.handle);
 app.use(bodyparser());
