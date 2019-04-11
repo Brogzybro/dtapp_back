@@ -12,7 +12,7 @@ const config = {
     authURL: 'https://www.fitbit.com/oauth2/authorize',
     clientID: env.FITBIT_CLIENT_ID,
     clientSecret: env.FITBIT_CLIENT_SECRET,
-    scope: 'heartrate sleep activity',
+    scope: 'profile heartrate sleep activity',
     redirectURI: 'http://localhost:3000/fitbit/callback'
   }
 };

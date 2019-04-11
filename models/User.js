@@ -12,7 +12,8 @@ const User = new Schema({
   fitbit: {
     userID: String,
     accessToken: String,
-    refreshToken: String
+    refreshToken: String,
+    timezone: String
   }
 });
 
