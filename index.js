@@ -6,10 +6,11 @@ const logger = require('koa-logger');
 const Agenda = require('agenda');
 
 const config = require('./config');
-const errors = require('./controllers/errors');
+const errors = require('./middleware/errors');
+const auth = require('./middleware/auth');
+
 const healthkit = require('./controllers/healthkit');
 const fitbit = require('./controllers/fitbit');
-const auth = require('./controllers/auth');
 const user = require('./controllers/user');
 
 const app = new Koa();
@@ -32,7 +33,7 @@ router.get('/fitbit/auth', fitbit.auth);
 router.get('/fitbit/callback', fitbit.callback);
 
 app.use(logger());
-app.use(errors.handle);
+app.use(errors);
 app.use(bodyparser());
 app.use(router.routes());
 app.use(router.allowedMethods());

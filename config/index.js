@@ -13,7 +13,7 @@ const config = {
     clientID: env.FITBIT_CLIENT_ID,
     clientSecret: env.FITBIT_CLIENT_SECRET,
     scope: 'profile heartrate sleep activity',
-    redirectURI: 'http://localhost:3000/fitbit/callback'
+    redirectURI: env.FITBIT_REDIRECT_URI
   }
 };
 

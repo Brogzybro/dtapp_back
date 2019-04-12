@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Sample = require('../models/Sample');
-const FitbitClient = require('../lib/fitbit');
+const FitbitClient = require('../lib/FitbitClient');
 const { DateTime } = require('luxon');
 
 const fitbitActivities = {
