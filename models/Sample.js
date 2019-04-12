@@ -14,4 +14,8 @@ const Sample = new Schema({
 // Allow arbitrary metadata
 Sample.set('strict', false);
 
+Sample.static('findLatest', function(conditions) {
+  return this.findOne(conditions).sort({ startDate: -1 });
+});
+
 module.exports = mongoose.model('Sample', Sample);

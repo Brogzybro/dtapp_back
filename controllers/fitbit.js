@@ -1,17 +1,21 @@
 const User = require('../models/User');
-const fitbit = require('../lib/fitbit');
+const FitbitClient = require('../lib/fitbit');
 
 exports.auth = async(ctx) => {
   const { token } = ctx.query;
   const user = await User.findByToken(token);
   ctx.assert(user, 401);
-  ctx.redirect(fitbit.getAuthURL(token));
+
+  const client = new FitbitClient(user);
+  ctx.redirect(client.authURL(token));
 };
 
 exports.callback = async(ctx) => {
   const { state, code } = ctx.query;
   const user = await User.findByToken(state);
   ctx.assert(user, 401);
-  await fitbit.callback(user, code);
+
+  const client = new FitbitClient(user);
+  await client.callback(code);
   ctx.redirect('healthscraper://callback');
 };

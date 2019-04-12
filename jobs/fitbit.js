@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Sample = require('../models/Sample');
-const fitbit = require('../lib/fitbit');
+const FitbitClient = require('../lib/fitbit');
 const { DateTime } = require('luxon');
 
 const fitbitActivities = {
@@ -26,7 +26,7 @@ const fitbitActivities = {
   }
 };
 
-async function syncActivity(endpoint, activity, user) {
+async function syncActivity(endpoint, activity, user, client) {
   const { identifier, granularity, prune } = activity;
 
   let now = DateTime.local();
@@ -34,19 +34,18 @@ async function syncActivity(endpoint, activity, user) {
   let end = now.endOf('minute');
   let start = now.minus({ days: 1 }).plus({ minutes: 1 }).startOf('minute');
 
-  const sample = await Sample
-    .findOne()
-    .where('user').eq(user.id)
-    .where('type').eq(identifier)
-    .where('source').eq('fitbit')
-    .sort({ startDate: -1 });
+  const sample = await Sample.findLatest({
+    user: user.id,
+    type: identifier,
+    source: 'fitbit'
+  });
 
   if (sample) {
     let last = DateTime.fromJSDate(sample.startDate).startOf('minute');
     start = DateTime.max(start, last);
   }
 
-  const results = await fitbit.activityTimeSeries(endpoint, user, start, end, granularity);
+  const results = await client.activityTimeSeries(endpoint, start, end, granularity);
   const { dataset } = results[`activities-${endpoint}-intraday`];
   const samples = [];
 
@@ -81,19 +80,19 @@ async function syncActivity(endpoint, activity, user) {
     samples.push(sample);
   }
 
+  // TODO: Don't save duplicates
   await Sample.insertMany(samples);
 }
 
-async function syncSleep(user) {
+async function syncSleep(user, client) {
   const { timezone } = user.fitbit;
   let from = DateTime.local().minus({ weeks: 1 });
 
-  const sample = await Sample
-    .findOne()
-    .where('user').eq(user.id)
-    .where('type').eq('sleep')
-    .where('source').eq('fitbit')
-    .sort({ startDate: -1 });
+  const sample = await Sample.findLatest({
+    user: user.id,
+    type: 'sleep',
+    source: 'fitbit'
+  });
 
   if (sample) {
     const last = DateTime.fromJSDate(sample.startDate);
@@ -101,7 +100,7 @@ async function syncSleep(user) {
   }
 
   const samples = [];
-  const result = await fitbit.sleep(user, from);
+  const result = await client.sleep(from);
 
   // Retry later if pending
   if (result.meta && result.meta.state === 'pending') {
@@ -138,15 +137,16 @@ async function sync() {
   const activities = Object.keys(fitbitActivities);
 
   for await (const user of User.find()) {
-    let profile = await fitbit.profile(user);
+    const client = new FitbitClient(user);
+    const profile = await client.profile();
     user.fitbit.timezone = profile.user.timezone;
-    //await user.save();
+    // await user.save();
 
     for (let key of activities) {
-      await syncActivity(key, fitbitActivities[key], user);
+      await syncActivity(key, fitbitActivities[key], user, client);
     }
 
-    await syncSleep(user);
+    await syncSleep(user, client);
   }
 }
 
