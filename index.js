@@ -12,6 +12,7 @@ const auth = require('./middleware/auth');
 const healthkit = require('./controllers/healthkit');
 const fitbit = require('./controllers/fitbit');
 const user = require('./controllers/user');
+const samples = require('./controllers/samples');
 
 const app = new Koa();
 const router = new Router();
@@ -31,6 +32,8 @@ router.post('/healthkit', auth, healthkit.sync);
 
 router.get('/fitbit/auth', fitbit.auth);
 router.get('/fitbit/callback', fitbit.callback);
+
+router.get('/samples', auth, samples.list);
 
 app.use(logger());
 app.use(errors);
