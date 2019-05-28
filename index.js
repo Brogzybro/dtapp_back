@@ -1,11 +1,10 @@
-const mongoose = require('mongoose');
 const Koa = require('koa');
 const bodyparser = require('koa-bodyparser');
 const Router = require('koa-router');
 const logger = require('koa-logger');
 const Agenda = require('agenda');
 
-const config = require('./config');
+const db = require('./db');
 const errors = require('./middleware/errors');
 const auth = require('./middleware/auth');
 
@@ -17,8 +16,6 @@ const samples = require('./controllers/samples');
 const app = new Koa();
 const router = new Router();
 const agenda = new Agenda();
-
-mongoose.connect(config.mongo.uri);
 
 router.get('/', auth, async(ctx) => {
   ctx.status = 204;
@@ -37,13 +34,13 @@ router.get('/samples', auth, samples.list);
 
 app.use(logger());
 app.use(errors);
-app.use(bodyparser());
+app.use(bodyparser({ jsonLimit: 10000000 }));
 app.use(router.routes());
 app.use(router.allowedMethods());
 
 app.listen(3000);
 
-agenda.mongo(mongoose.connection);
+agenda.mongo(db);
 
 const fitbitSync = require('./jobs/fitbit');
 
