@@ -18,4 +18,11 @@ Sample.static('findLatest', function(conditions) {
   return this.findOne(conditions).sort({ startDate: -1 });
 });
 
+Sample.set('toJSON', {
+  transform: (doc, ret) => {
+    ret.startDate = doc.startDate.valueOf();
+    ret.endDate = doc.endDate.valueOf();
+  }
+});
+
 module.exports = mongoose.model('Sample', Sample);
