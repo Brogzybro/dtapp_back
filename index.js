@@ -5,7 +5,7 @@ const logger = require('koa-logger');
 const Agenda = require('agenda');
 
 const db = require('./db');
-const config = require('./comfig');
+const config = require('./config');
 const errors = require('./middleware/errors');
 const auth = require('./middleware/auth');
 
