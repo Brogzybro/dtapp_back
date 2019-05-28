@@ -13,7 +13,7 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_URI: mongodb://mongo:27017/digitaltwin
+      MONGO_URL: mongodb://mongo:27017/digitaltwin
     depends_on:
       - mongo
   mongo:

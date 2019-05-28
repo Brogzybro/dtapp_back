@@ -3,7 +3,7 @@ const { env } = process;
 
 const config = {
   mongo: {
-    uri: env.MONGO_URI
+    uri: env.MONGO_URL
   },
 
   fitbit: {
