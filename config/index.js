@@ -16,6 +16,13 @@ const config = {
     clientSecret: env.FITBIT_CLIENT_SECRET,
     scope: 'profile heartrate sleep activity',
     redirectURI: env.FITBIT_REDIRECT_URI
+  },
+
+  apple: {
+    APNKey: env.APPLE_APN_KEY,
+    APNKeyID: env.APPLE_APN_KEY_ID,
+    teamID: env.APPLE_TEAM_ID,
+    bundleID: env.APPLE_BUNDLE_ID
   }
 };
 

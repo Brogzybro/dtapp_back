@@ -25,6 +25,7 @@ router.get('/', auth, async(ctx) => {
 router.post('/user', user.create);
 router.patch('/user', auth, user.update);
 router.post('/user/token', auth, user.token);
+router.post('/user/ios/device', auth, user.deviceToken);
 
 router.post('/healthkit', auth, healthkit.sync);
 
@@ -44,13 +45,20 @@ app.listen(config.port);
 agenda.mongo(db);
 
 const fitbitSync = require('./jobs/fitbit');
+const monitors = require('./jobs/monitors');
 
 agenda.define('fitbit sync', (job, done) => {
   console.log('Fitbit sync in progress');
   fitbitSync().then(done).catch(console.error);
 });
 
+agenda.define('monitor heartrate', (job, done) => {
+  console.log('Checking heart rate');
+  monitors.heartRate().then(done).catch(console.error);
+});
+
 (async() => {
   await agenda.start();
   await agenda.every('20 minutes', 'fitbit sync');
+  await agenda.every('20 minutes', 'monitor heartrate');
 })().catch(console.error);

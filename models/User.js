@@ -14,6 +14,9 @@ const User = new Schema({
     accessToken: String,
     refreshToken: String,
     timezone: String
+  },
+  iOS: {
+    deviceTokens: [String]
   }
 });
 

@@ -21,3 +21,11 @@ exports.token = async(ctx) => {
   const { token } = await user.generateToken();
   ctx.body = { token };
 };
+
+exports.deviceToken = async(ctx) => {
+  const { user } = ctx.state;
+  const { token } = ctx.request.body;
+  user.iOS.deviceTokens.addToSet(token);
+  await user.save();
+  ctx.status = 201;
+};
