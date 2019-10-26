@@ -43,7 +43,7 @@ app.use(router.allowedMethods());
 app.listen(config.port);
 
 agenda.mongo(db);
-
+/*
 const fitbitSync = require('./jobs/fitbit');
 const monitors = require('./jobs/monitors');
 
@@ -56,9 +56,11 @@ agenda.define('monitor heartrate', (job, done) => {
   console.log('Checking heart rate');
   monitors.heartRate().then(done).catch(console.error);
 });
-
+*/
+/*
 (async() => {
   await agenda.start();
   await agenda.every('20 minutes', 'fitbit sync');
   await agenda.every('20 minutes', 'monitor heartrate');
 })().catch(console.error);
+*/

@@ -1,13 +1,19 @@
 const User = require('../models/User');
 
-// Create user
+/* Create user
+  body {}
+    username: name
+    email: email
+    password: password
+*/
 exports.create = async(ctx) => {
   const user = await User.create(ctx.request.body);
   ctx.state.user = user;
   ctx.status = 201;
 };
 
-// Update user
+/* Update user
+*/
 exports.update = async(ctx) => {
   let { user } = ctx.state;
   user.set(ctx.request.body);
