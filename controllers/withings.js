@@ -54,7 +54,9 @@ exports.callback = async(ctx) => {
         const data = JSON.parse(body);
         console.log(data.access_token);
         const access_token = data.access_token;
-        Token.create(data);
+        Token.create(data, function(err, mdata) {
+          console.log('err: ' + err);
+        });
 
         console.log('Sent request for access token');
       } else {
