@@ -18,6 +18,14 @@ const config = {
     redirectURI: env.FITBIT_REDIRECT_URI
   },
 
+  withings: {
+    authURL: 'https://account.withings.com/oauth2_user/authorize2',
+    clientID: env.WITHINGS_CLIENT_ID,
+    clientSecret: env.WITHINGS_CLIENT_SECRET,
+    scope: 'user.info,user.metrics',
+    redirectURI: env.WITHINGS_REDIRECT_URI
+  },
+
   apple: {
     APNKey: env.APPLE_APN_KEY,
     APNKeyID: env.APPLE_APN_KEY_ID,
