@@ -72,6 +72,36 @@ exports.callback = async(ctx) => {
   }
 
   /*
+  app.get('/userinfo', function (req, res){
+
+    console.log(req.query);
+    request({
+      headers: {
+        'Authorization': 'Bearer ' + access_token
+      },
+      uri: 'https://wbsapi.withings.net/v2/user?action=getdevice',
+      method: 'GET'
+      }, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log(body);
+        console.log("Sent request for access token, " + typeof(body));
+        data = JSON.parse(body);
+        if(data && data.status == 0) {
+          res.send(data.body)
+        }else{
+          res.send("shit idk")
+        }
+      } else {
+        console.error("Unable to send message.");
+
+        console.error(response);
+        console.error(error);
+        console.log(response.statusCode);
+      }
+    });
+  });
+  */
+  /*
   const user = await User.findByToken(state);
   ctx.assert(user, 401);
 
