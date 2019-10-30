@@ -15,6 +15,11 @@ function authURL() {
   return url;
 };
 
+function testtest(name) {
+  return 'my name is ' + name;
+}
+exports.testtest = testtest;
+
 function getAuthor(code, state) {
  
 }
@@ -32,7 +37,7 @@ exports.auth = async(ctx) => {
 };
 
 exports.callback = async(ctx) => {
-  const { code } = ctx.query;
+  const { code, state } = ctx.query;
   const { clientID, clientSecret, redirectURI } = config;
 
   console.log(ctx.query);
@@ -53,9 +58,8 @@ exports.callback = async(ctx) => {
         console.log(body);
         const data = JSON.parse(body);
         console.log(data.access_token);
-        const access_token = data.access_token;
         Token.create(data, function(err, mdata) {
-          console.log('err: ' + err);
+          console.log('token create err: ' + err);
         });
 
         console.log('Sent request for access token');
