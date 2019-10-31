@@ -7,9 +7,20 @@ const User = require('../models/User');
     password: password
 */
 exports.create = async(ctx) => {
-  const user = await User.create(ctx.request.body);
-  ctx.state.user = user;
-  ctx.status = 201;
+  const createdUser = await User.create(ctx.request.body).catch((err) => {
+    if (err && err.code === 11000) {
+      console.log('Duplicate user');
+      ctx.status = 422;
+      ctx.body = 'User already exists';
+    } else if (err) {
+      console.log(err);
+      ctx.status = 400;
+    }
+  });
+  if (createdUser) {
+    ctx.state.user = createdUser;
+    ctx.status = 201;
+  }
 };
 
 /* Update user
@@ -17,8 +28,21 @@ exports.create = async(ctx) => {
 exports.update = async(ctx) => {
   let { user } = ctx.state;
   user.set(ctx.request.body);
-  await user.save();
-  ctx.status = 200;
+  const updatedUser = await user.save().catch((err) => {
+    if (err && err.code === 11000) {
+      console.log('Duplicate user');
+      ctx.status = 422;
+      ctx.body = 'User already exists';
+    } else if (err) {
+      console.log(err);
+      ctx.status = 400;
+    }
+  });
+  if (updatedUser) {
+    console.log('no error');
+    ctx.state.user = user;
+    ctx.status = 201;
+  }
 };
 
 // Get token

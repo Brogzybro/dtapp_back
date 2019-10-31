@@ -3,8 +3,8 @@ const config = require('../config').withings;
 const request = require('request');
 const querystring = require('querystring');
 
-function authURL() {
-  const { clientID, scope, redirectURI, state } = config;
+function authURL(state) {
+  const { clientID, scope, redirectURI } = config;
   const url = new URL(config.authURL);
   const params = url.searchParams;
   params.set('response_type', 'code');
@@ -21,7 +21,7 @@ function testtest(name) {
 exports.testtest = testtest;
 
 function getAuthor(code, state) {
- 
+ const { user } = ctx.state;
 }
 
 exports.auth = async(ctx) => {
@@ -36,13 +36,24 @@ exports.auth = async(ctx) => {
   ctx.redirect(authURL());
 };
 
+/**
+ * Happens when withings redirects user back to our url with
+ * authorization code and state
+ *
+ * @param ctx.query.code The authorization code
+ * @param ctx.query.state The state
+ */
 exports.callback = async(ctx) => {
   const { code, state } = ctx.query;
   const { clientID, clientSecret, redirectURI } = config;
+  const { user } = ctx.state;
+
+  console.log('user ', user);
 
   console.log(ctx.query);
   // if(req.query)
   if (code) {
+    
     request({
       uri: 'https://account.withings.com/oauth2/token',
       method: 'POST',
@@ -68,7 +79,7 @@ exports.callback = async(ctx) => {
 
         // console.error(response);
         console.error(error);
-        console.log(response);
+        // console.log(response);
         console.log(response.body);
         console.log(response.statusCode);
       }

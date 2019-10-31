@@ -5,7 +5,8 @@ const config = {
   port: env.PORT || 3000,
 
   mongo: {
-    uri: env.MONGO_URL
+    uri: env.MONGO_URL,
+    test_uri: env.TEST_MONGO_URL
   },
 
   fitbit: {

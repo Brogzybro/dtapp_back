@@ -6,7 +6,8 @@ const Token = require('./Token');
 const User = new Schema({
   username: {
     type: String,
-    required: [true, 'Username is required']
+    required: [true, 'Username is required'],
+    unique: true
   },
   passwordHash: String,
   fitbit: {

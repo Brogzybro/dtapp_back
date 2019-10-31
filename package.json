@@ -6,8 +6,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node .",
+    "dev": "nodemon .",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "testo": "jest --detectOpenHandles"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.0.3",
