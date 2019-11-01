@@ -4,7 +4,6 @@ const config = require('../config').mongo;
 const Token = require('../models/WithingsToken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
-const Koa = require('koa');
 
 const mockData = {
   'access_token': '9bc24895c9e10e53d273cf079ad8a17290d05ae8',
