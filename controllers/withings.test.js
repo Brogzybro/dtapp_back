@@ -4,6 +4,15 @@ const config = require('../config').mongo;
 const Token = require('../models/WithingsToken');
 const User = require('../models/User');
 const auth = require('../routes/middleware/auth');
+const withings = require('./withings');
+const supertest = require('supertest');
+const app = require('../index');
+
+let server;
+
+beforeAll(() => {
+  server = app.listen(3002);
+});
 
 const mockData = {
   'access_token': '9bc24895c9e10e53d273cf079ad8a17290d05ae8',
@@ -31,12 +40,31 @@ const mockAuthCtx = {
   }
 };
 
+const mockWithingsCallbackCTX = {
+  query: {
+    code: 'test',
+    state: 'teststate'
+  },
+  state: {
+    mockUser
+  }
+};
+
+test('withings', async() => {
+  const result = await supertest(server).get('/withings/callback').query({ code: 'test', state: 'test' });
+  expect(result).toBeTruthy();
+}, 10000);
+
 test('Should output name in appropriate format', () => {
   expect(testtest('test')).toBe('my name is test');
 });
 
 beforeAll(async() => {
   await await mongoose.connect(config.test_uri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+  const token = await Token.findOne({ access_token: mockData.access_token });
+  if (token) {
+    await token.remove();
+  }
 });
 
 test('should add withings token', async() => {
@@ -45,17 +73,17 @@ test('should add withings token', async() => {
   const token = await Token.create(mockData).catch((err) => {
     console.log('token create err: ' + err);
   });
-  console.log(token);
-  console.log(user);
-  expect(true).toBeTruthy();
+  // console.log(token);
+  // console.log(user);
+  expect(token).toBeTruthy();
 });
 
 test('should log in', async() => {
   await auth(mockAuthCtx, () => {});
-  console.log(mockAuthCtx);
+  // console.log(mockAuthCtx);
   expect(true).toBeTruthy();
 });
 
 test('should remove the user', async() => {
   await User.deleteOne({ username: mockUser.username });
-});
+}); 

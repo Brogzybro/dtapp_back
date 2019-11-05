@@ -36,6 +36,13 @@ exports.auth = async(ctx) => {
   ctx.redirect(authURL());
 };
 
+exports.newToken = (user, data) => {
+  data.user = user._id;
+  Token.create(data, function(err, mdata) {
+    console.log('token create err: ' + err);
+  });
+};
+
 /**
  * Happens when withings redirects user back to our url with
  * authorization code and state
@@ -53,35 +60,40 @@ exports.callback = async(ctx) => {
   console.log(ctx.query);
   // if(req.query)
   if (code) {
-    
-    request({
-      uri: 'https://account.withings.com/oauth2/token',
-      method: 'POST',
-      body: querystring.stringify({
-        grant_type: 'authorization_code',
-        client_id: clientID,
-        client_secret: clientSecret,
-        code: code,
-        redirect_uri: redirectURI
-      })
-    }, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        console.log(body);
-        const data = JSON.parse(body);
-        console.log(data.access_token);
-        Token.create(data, function(err, mdata) {
-          console.log('token create err: ' + err);
-        });
-
-        console.log('Sent request for access token');
-      } else {
-        console.error('Unable to send message.');
-
-        // console.error(response);
-        console.error(error);
-        // console.log(response);
-        console.log(response.body);
-        console.log(response.statusCode);
+    (new Promise((resolve, reject) => {
+      request({
+        uri: 'https://account.withings.com/oauth2/token',
+        method: 'POST',
+        body: querystring.stringify({
+          grant_type: 'authorization_code',
+          client_id: clientID,
+          client_secret: clientSecret,
+          code: code,
+          redirect_uri: redirectURI
+        })
+      }, function(error, response, body) {
+        if (!error) {
+          if (response.statusCode === 200) {
+            const data = JSON.parse(body);
+            console.log('Got response for access token');
+            resolve(data);
+          } else if (response.statusCode === 401) {
+            console.log('Invalid authorization code', response.body, response.statusCode);
+            resolve(null);
+          } else {
+            console.log('Unknown status code', response.body, response.statusCode);
+            resolve(null); 
+          } 
+        } else {
+          console.error('Request error.');
+          console.error(error);
+          resolve(null);
+        }
+      });
+    })).then((data) => {
+      console.log('returned data', data);
+      if (data) {
+        this.newToken(user, data);
       }
     });
   }

@@ -16,7 +16,7 @@ app.use(bodyparser({ jsonLimit: 10000000 }));
 app.use(routes.routes());
 app.use(routes.allowedMethods());
 
-app.listen(config.port);
+// const server = app.listen(config.port);
 
 agenda.mongo(db);
 /*
@@ -40,3 +40,4 @@ agenda.define('monitor heartrate', (job, done) => {
   await agenda.every('20 minutes', 'monitor heartrate');
 })().catch(console.error);
 */
+module.exports = app;

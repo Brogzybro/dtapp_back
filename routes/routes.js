@@ -17,6 +17,7 @@ router.get('/', auth, async(ctx) => {
 
 router.post('/user', user.create);
 router.patch('/user', auth, user.update);
+
 router.post('/user/token', auth, user.token);
 router.post('/user/ios/device', auth, user.deviceToken);
 

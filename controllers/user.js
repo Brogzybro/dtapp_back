@@ -39,7 +39,6 @@ exports.update = async(ctx) => {
     }
   });
   if (updatedUser) {
-    console.log('no error');
     ctx.state.user = user;
     ctx.status = 201;
   }
