@@ -80,59 +80,34 @@ exports.callback = async(ctx) => {
 
   // if(req.query)
   if (code) {
-    await accessTokenRequest(
+    const data = await accessTokenRequest(
       querystring.stringify({
         grant_type: 'authorization_code',
         client_id: clientID,
         client_secret: clientSecret,
         code: code,
         redirect_uri: redirectURI
-      }));
-  }
-  /*
-    (new Promise((resolve, reject) => {
-      request({
-        uri: 'https://account.withings.com/oauth2/token',
-        method: 'POST',
-        body: querystring.stringify({
-          grant_type: 'authorization_code',
-          client_id: clientID,
-          client_secret: clientSecret,
-          code: code,
-          redirect_uri: redirectURI
-        })
-      }, function(error, response, body) {
-        if (!error) {
-          if (response.statusCode === 200) {
-            const data = JSON.parse(body);
-            console.log('Got response for access token');
-            resolve(data);
-          } else if (response.statusCode === 401) {
-            console.log('Invalid authorization code', response.body, response.statusCode);
-            reject(new Error('null'));
-          } else {
-            console.log('Unknown status code', response.body, response.statusCode);
-            reject(new Error('null'));
-          }
-        } else {
-          console.error('Request error.');
-          console.error(error);
-          reject(new Error('null'));
-        }
-      });
-    })).catch((err) => {
-      console.log('err', err);
-    }).then((data) => {
-      console.log('returned data', data);
-      if (data) {
-        // this.newToken(user, data);
-        console.log('eyo data exists');
-      }
+      })
+    ).catch((err) => {
+      console.log('access token request failed', err);
     });
-  }
-  */
 
+    if (data) {
+      this.newToken(user, data);
+    }
+  }
   /*
+  const user = await User.findByToken(state);
+  ctx.assert(user, 401);
+
+  const client = new FitbitClient(user);
+  await client.callback(code);
+  */
+  // ctx.redirect('healthscraper://callback');
+  // ctx.status = 200;
+};
+
+/*
   app.get('/userinfo', function (req, res){
 
     console.log(req.query);
@@ -161,14 +136,4 @@ exports.callback = async(ctx) => {
       }
     });
   });
-  */
-  /*
-  const user = await User.findByToken(state);
-  ctx.assert(user, 401);
-
-  const client = new FitbitClient(user);
-  await client.callback(code);
-  */
-  // ctx.redirect('healthscraper://callback');
-  // ctx.status = 200;
-};
+*/

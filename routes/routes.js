@@ -30,6 +30,8 @@ const router = new Router();
  * tags:
  *    - name: user
  *      description: Everything to do with user
+ *    - name: withings
+ *      description: Everything to do with withings
  */
 
 router.get('/', auth, async(ctx) => {
@@ -43,7 +45,7 @@ router.get('/', auth, async(ctx) => {
  *    post:
  *      description: Creates a new user
  *      tags:
- *        user
+ *        - user
  *      requestBody:
  *        required: true
  *        content:
@@ -60,6 +62,28 @@ router.get('/', auth, async(ctx) => {
  */
 router.post('/user', user.create);
 
+/**
+ * @swagger
+ *
+ * /user:
+ *    patch:
+ *      description: Modify the logged in user
+ *      tags:
+ *        - user
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      responses:
+ *        201:
+ *          description: Updated
+ *        422:
+ *          description: New username already exists
+ *        400:
+ *          description: Other/Unknown
+ */
 router.patch('/user', auth, user.update);
 
 router.post('/user/token', auth, user.token);
@@ -70,7 +94,19 @@ router.post('/healthkit', auth, healthkit.sync);
 router.get('/fitbit/auth', fitbit.auth);
 router.get('/fitbit/callback', fitbit.callback);
 
-router.get('/withings/auth', withings.auth);
+/**
+ * @swagger
+ *
+ * /withings/auth:
+ *    get:
+ *      description: Starts the authentication process for withings api
+ *      tags:
+ *        - withings
+ *      responses:
+ *        302:
+ *          description: Redirects to withings website
+ */
+router.get('/withings/auth', auth, withings.auth);
 router.get('/withings/callback', withings.callback);
 
 router.get('/samples', auth, samples.list);

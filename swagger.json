@@ -1,15 +1,17 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Hello World",
-    "version": "1.0.0",
-    "description": "A sample API"
+    "title": "DTApp",
+    "version": "0.0.1",
+    "description": "Digital Twin Application, unfinished."
   },
   "paths": {
     "/user": {
       "post": {
         "description": "Creates a new user",
-        "tags": "user",
+        "tags": [
+          "user"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -29,6 +31,46 @@
           },
           "422": {
             "description": "User already exists"
+          }
+        }
+      },
+      "patch": {
+        "description": "Modify the logged in user",
+        "tags": [
+          "user"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updated"
+          },
+          "400": {
+            "description": "Other/Unknown"
+          },
+          "422": {
+            "description": "New username already exists"
+          }
+        }
+      }
+    },
+    "/withings/auth": {
+      "get": {
+        "description": "Starts the authentication process for withings api",
+        "tags": [
+          "withings"
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to withings website"
           }
         }
       }
@@ -57,6 +99,10 @@
     {
       "name": "user",
       "description": "Everything to do with user"
+    },
+    {
+      "name": "withings",
+      "description": "Everything to do with withings"
     }
   ]
 }

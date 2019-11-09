@@ -56,7 +56,9 @@ const mockWithingsCallbackCTX = {
 };
 
 test('withings', async() => {
-  const result = await supertest(server).get('/withings/callback').query({ code: 'test', state: 'test' });
+  const result = await supertest(server)
+    .get('/withings/callback')
+    .query({ code: 'test', state: 'test' });
   expect(result).toBeTruthy();
 }, 10000);
 
