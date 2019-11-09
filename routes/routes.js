@@ -11,11 +11,55 @@ const samples = require('../controllers/samples');
 
 const router = new Router();
 
+/**
+ * @swagger
+ *
+ * components:
+ *    schemas:
+ *      User:
+ *        type: object
+ *        required:
+ *          - password
+ *          - username
+ *        properties:
+ *          username:
+ *            type: string
+ *          password:
+ *            type: string
+ *
+ * tags:
+ *    - name: user
+ *      description: Everything to do with user
+ */
+
 router.get('/', auth, async(ctx) => {
   ctx.status = 204;
 });
 
+/**
+ * @swagger
+ *
+ * /user:
+ *    post:
+ *      description: Creates a new user
+ *      tags:
+ *        user
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      responses:
+ *        201:
+ *          description: Created
+ *        422:
+ *          description: User already exists
+ *        400:
+ *          description: Other/Unknown
+ */
 router.post('/user', user.create);
+
 router.patch('/user', auth, user.update);
 
 router.post('/user/token', auth, user.token);

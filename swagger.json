@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Hello World",
+    "version": "1.0.0",
+    "description": "A sample API"
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "description": "Creates a new user",
+        "tags": "user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Other/Unknown"
+          },
+          "422": {
+            "description": "User already exists"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [
+          "password",
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "user",
+      "description": "Everything to do with user"
+    }
+  ]
+}

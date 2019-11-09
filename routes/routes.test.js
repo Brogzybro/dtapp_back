@@ -4,8 +4,13 @@ const User = require('../models/User');
 
 let server;
 
-beforeAll(() => {
-  server = app.listen(3001);
+beforeAll((done) => {
+  server = app.listen(done);
+  console.log('withings test js listening on ' + server.address().port);
+});
+
+afterAll((done) => {
+  server.close(done);
 });
 
 const testUser = {

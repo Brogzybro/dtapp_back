@@ -43,9 +43,32 @@ exports.newToken = (user, data) => {
   });
 };
 
+function accessTokenRequest(body) {
+  return new Promise((resolve, reject) => {
+    request({
+      uri: 'https://account.withings.com/oauth2/token',
+      method: 'POST',
+      body: body
+    }, function(error, response, body) {
+      if (!error) {
+        if (response.statusCode === 200) {
+          const data = JSON.parse(body);
+          resolve(data);
+        } else if (response.statusCode === 401) {
+          reject(new Error('Invalid authorization code'));
+        } else {
+          reject(new Error('Unknown status code returned'));
+        } 
+      } else {
+        reject(new Error('Request error.'));
+      }
+    });
+  });
+}
+
 /**
  * Happens when withings redirects user back to our url with
- * authorization code and state
+ * authorization code and state. Then requests access token.
  *
  * @param ctx.query.code The authorization code
  * @param ctx.query.state The state
@@ -55,11 +78,18 @@ exports.callback = async(ctx) => {
   const { clientID, clientSecret, redirectURI } = config;
   const { user } = ctx.state;
 
-  console.log('user ', user);
-
-  console.log(ctx.query);
   // if(req.query)
   if (code) {
+    await accessTokenRequest(
+      querystring.stringify({
+        grant_type: 'authorization_code',
+        client_id: clientID,
+        client_secret: clientSecret,
+        code: code,
+        redirect_uri: redirectURI
+      }));
+  }
+  /*
     (new Promise((resolve, reject) => {
       request({
         uri: 'https://account.withings.com/oauth2/token',
@@ -79,24 +109,28 @@ exports.callback = async(ctx) => {
             resolve(data);
           } else if (response.statusCode === 401) {
             console.log('Invalid authorization code', response.body, response.statusCode);
-            resolve(null);
+            reject(new Error('null'));
           } else {
             console.log('Unknown status code', response.body, response.statusCode);
-            resolve(null); 
-          } 
+            reject(new Error('null'));
+          }
         } else {
           console.error('Request error.');
           console.error(error);
-          resolve(null);
+          reject(new Error('null'));
         }
       });
-    })).then((data) => {
+    })).catch((err) => {
+      console.log('err', err);
+    }).then((data) => {
       console.log('returned data', data);
       if (data) {
-        this.newToken(user, data);
+        // this.newToken(user, data);
+        console.log('eyo data exists');
       }
     });
   }
+  */
 
   /*
   app.get('/userinfo', function (req, res){

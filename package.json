@@ -5,10 +5,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node .",
-    "dev": "nodemon .",
+    "start": "node start.js",
+    "dev": "nodemon start.js",
     "lint": "eslint .",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles",
+    "swaggerjsdoc": "swagger-jsdoc -d swaggerDef.js",
+    "gendoc": "openapi-generator generate -i swagger.json -g html -o doc/test"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.0.3",
@@ -21,6 +23,8 @@
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
+    "koa-send": "^5.0.0",
+    "koa2-swagger-ui": "^2.15.4",
     "luxon": "^1.12.1",
     "mongoose": "^5.4.20",
     "request": "^2.88.0",
@@ -28,6 +32,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^1.0.2-4.2.0",
     "@types/jest": "^24.0.21",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
@@ -38,6 +43,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "jest": "^24.9.0",
     "nodemon": "^1.18.10",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "swagger-jsdoc": "^3.4.0"
   }
 }

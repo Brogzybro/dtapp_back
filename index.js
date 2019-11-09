@@ -1,12 +1,12 @@
 const Koa = require('koa');
 const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
+const send = require('koa-send');
+const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
 
-const db = require('./db');
-const config = require('./config');
-
 const routes = require('./routes/routes');
+const db = require('./db');
 
 const app = new Koa();
 const agenda = new Agenda();
@@ -15,8 +15,17 @@ app.use(logger());
 app.use(bodyparser({ jsonLimit: 10000000 }));
 app.use(routes.routes());
 app.use(routes.allowedMethods());
-
-// const server = app.listen(config.port);
+app.use(
+  koaSwagger({
+    routePrefix: '/swagger',
+    swaggerOptions: {
+      url: './swagger.json'
+    }
+  })
+);
+app.use(async(ctx) => {
+  await send(ctx, 'swagger.json');
+});
 
 agenda.mongo(db);
 /*
