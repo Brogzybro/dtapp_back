@@ -107,7 +107,7 @@ router.get('/fitbit/callback', fitbit.callback);
  *          description: Redirects to withings website
  */
 router.get('/withings/auth', auth, withings.auth);
-router.get('/withings/callback', withings.callback);
+router.get('/withings/callback', auth, withings.callback);
 
 router.get('/samples', auth, samples.list);
 

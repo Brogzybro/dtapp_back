@@ -2,16 +2,9 @@ const supertest = require('supertest');
 const app = require('../index');
 const User = require('../models/User');
 
-let server;
-
-beforeAll((done) => {
-  server = app.listen(done);
-  console.log('withings test js listening on ' + server.address().port);
-});
-
-afterAll((done) => {
-  server.close(done);
-});
+function genAuthToken(user) {
+  return 'Basic ' + Buffer.from(user.username + ':' + user.password).toString('base64');
+}
 
 const testUser = {
   username: 'userblablablabla',
@@ -23,11 +16,17 @@ const testUser2 = {
   password: 'mysecretpasswoopedy'
 };
 
-function genAuthToken(user) {
-  return 'Basic ' + Buffer.from(user.username + ':' + user.password).toString('base64');
-}
+let server;
 
-describe('tests', () => {
+beforeAll((done) => {
+  server = app.listen(done);
+});
+
+afterAll((done) => {
+  server.close(done);
+});
+
+describe('user tests', () => {
   beforeAll(async() => {
     // Remove user before tests if it exists
     const user = await User.findOne({ username: testUser.username });

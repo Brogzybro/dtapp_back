@@ -9,7 +9,8 @@ const Token = new Schema({
   token_type: { type: String },
   scope: { type: String },
   refresh_token: { type: String },
-  userid: { type: String }
+  userid: { type: String },
+  timestamp: { type: Date, default: Date.now }
 });
 
 /*

@@ -9,7 +9,6 @@ const User = require('../models/User');
 exports.create = async(ctx) => {
   const createdUser = await User.create(ctx.request.body).catch((err) => {
     if (err && err.code === 11000) {
-      console.log('Duplicate user');
       ctx.status = 422;
       ctx.body = 'User already exists';
     } else if (err) {
@@ -30,7 +29,6 @@ exports.update = async(ctx) => {
   user.set(ctx.request.body);
   const updatedUser = await user.save().catch((err) => {
     if (err && err.code === 11000) {
-      console.log('Duplicate user');
       ctx.status = 422;
       ctx.body = 'User already exists';
     } else if (err) {
