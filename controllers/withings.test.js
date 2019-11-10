@@ -1,11 +1,8 @@
-const { testtest } = require('./withings');
 const mongoose = require('mongoose');
 const config = require('../config').mongo;
 const Token = require('../models/WithingsToken');
 const User = require('../models/User');
 const auth = require('../routes/middleware/auth');
-const withings = require('./withings');
-const supertest = require('supertest');
 const app = require('../index');
 
 let server;
