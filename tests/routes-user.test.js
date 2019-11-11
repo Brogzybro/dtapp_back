@@ -1,10 +1,7 @@
 const supertest = require('supertest');
 const app = require('../index');
 const User = require('../models/User');
-
-function genAuthToken(user) {
-  return 'Basic ' + Buffer.from(user.username + ':' + user.password).toString('base64');
-}
+const tUtils = require('./testutils');
 
 const testUser = {
   username: 'userblablablabla',
@@ -18,16 +15,16 @@ const testUser2 = {
 
 let server;
 
-beforeAll((done) => {
+beforeAll(done => {
   server = app.listen(done);
 });
 
-afterAll((done) => {
+afterAll(done => {
   server.close(done);
 });
 
 describe('user tests', () => {
-  beforeAll(async() => {
+  beforeAll(async () => {
     // Remove user before tests if it exists
     const user = await User.findOne({ username: testUser.username });
     if (user) {
@@ -40,12 +37,14 @@ describe('user tests', () => {
     await User.create(testUser2);
   });
 
-  it('create new user', async() => {
-    const result = await supertest(server).post('/user').send(testUser);
+  it('create new user', async () => {
+    const result = await supertest(server)
+      .post('/user')
+      .send(testUser);
     expect(result.status).toEqual(201);
   });
 
-  it('update user', async() => {
+  it('update user', async () => {
     const newUserDetails = {
       username: testUser.username,
       password: 'mynewpassword'
@@ -53,16 +52,18 @@ describe('user tests', () => {
     const result = await supertest(server)
       .patch('/user')
       .send(newUserDetails)
-      .set('Authorization', genAuthToken(testUser));
+      .set('Authorization', tUtils.genAuthToken(testUser));
     expect(result.status).toEqual(201);
   });
 
-  it('create user that already exists should fail', async() => {
-    const result = await supertest(server).post('/user').send(testUser);
+  it('create user that already exists should fail', async () => {
+    const result = await supertest(server)
+      .post('/user')
+      .send(testUser);
     expect(result.status).toEqual(422);
   });
 
-  it('update user to name that already exists should fail', async() => {
+  it('update user to name that already exists should fail', async () => {
     const newUserDetails = {
       username: testUser.username,
       password: testUser2.password
@@ -70,7 +71,7 @@ describe('user tests', () => {
     const result = await supertest(server)
       .patch('/user')
       .send(newUserDetails)
-      .set('Authorization', genAuthToken(testUser2));
+      .set('Authorization', tUtils.genAuthToken(testUser2));
     expect(result.status).toEqual(422);
   });
 });

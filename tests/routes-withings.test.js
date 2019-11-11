@@ -2,14 +2,15 @@ const supertest = require('supertest');
 const app = require('../index');
 const User = require('../models/User');
 const configWithings = require('../config/index').withings;
+const tUtils = require('./testutils');
 
 let server;
 
-beforeAll((done) => {
+beforeAll(done => {
   server = app.listen(done);
 });
 
-afterAll((done) => {
+afterAll(done => {
   server.close(done);
 });
 
@@ -18,28 +19,22 @@ const withingsTestUser = {
   password: 'withingstestpassword'
 };
 
-async function supertestCreateUser(user) {
-  return supertest(server).post('/user').send(user);
-}
-
 describe('withings tests', () => {
-
-  beforeAll(async() => {
+  beforeAll(async () => {
     let user = await User.findOne({ username: withingsTestUser.username });
     if (!user) {
-      user = await supertestCreateUser(withingsTestUser);
+      user = await tUtils.supertestCreateUser(server, withingsTestUser);
     }
     expect(user).toBeInstanceOf(Object);
   });
 
-  it('acessing "/withings/auth" without auth credentials should deny access', async() => {
-    const result = await supertest(server)
-      .get('/withings/auth');
+  it('acessing "/withings/auth" without auth credentials should deny access', async () => {
+    const result = await supertest(server).get('/withings/auth');
     expect(result.status).toBe(401);
     expect(result.text).toMatch('Unauthorized');
   });
 
-  it('tests that auth redirects correctly', async() => {
+  it('tests that auth redirects correctly', async () => {
     const result = await supertest(server)
       .get('/withings/auth')
       .auth(withingsTestUser.username, withingsTestUser.password);
@@ -47,7 +42,7 @@ describe('withings tests', () => {
     expect(result.header.location).toMatch(configWithings.authURL);
   });
 
-  it('acessing "/withings/callback" without auth credentials should deny access', async() => {
+  it('acessing "/withings/callback" without auth credentials should deny access', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .query({ code: 'test', state: 'test' });
@@ -55,7 +50,7 @@ describe('withings tests', () => {
     expect(result.text).toMatch('Unauthorized');
   });
 
-  it('withings wrong code should fail authrozation', async() => {
+  it('withings wrong code should fail authrozation', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .auth(withingsTestUser.username, withingsTestUser.password)
@@ -64,7 +59,7 @@ describe('withings tests', () => {
     expect(result.text).toMatch('Invalid authorization code');
   });
 
-  it('withings with no code parameter should respond with 400 and error message', async() => {
+  it('withings with no code parameter should respond with 400 and error message', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .auth(withingsTestUser.username, withingsTestUser.password)
