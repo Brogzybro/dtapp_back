@@ -9,10 +9,14 @@ async function heartRate() {
     const time = DateTime.local().minus({ minutes: 20 });
 
     const samples = await Sample.find()
-      .where('user').equals(user.id)
-      .where('type').equals('heartRate')
-      .where('value').lte(40)
-      .where('startDate').gte(time);
+      .where('user')
+      .equals(user.id)
+      .where('type')
+      .equals('heartRate')
+      .where('value')
+      .lte(40)
+      .where('startDate')
+      .gte(time);
 
     if (!samples.length) continue;
 

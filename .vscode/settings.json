@@ -1,3 +1,4 @@
 {
-    "jest.pathToConfig": "jest.config.js"
+    "jest.pathToConfig": "jest.config.js",
+    "editor.formatOnSave": true
 }
