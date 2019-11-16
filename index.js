@@ -23,7 +23,7 @@ app.use(
     }
   })
 );
-app.use(async ctx => {
+app.use('/swagger.json', async ctx => {
   await send(ctx, 'swagger.json');
 });
 
