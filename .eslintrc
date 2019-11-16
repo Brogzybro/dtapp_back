@@ -1,12 +1,17 @@
 {
-  "extends": "standard",
+  "extends": ["standard", "prettier", "plugin:node/recommended"],
   "rules": {
+    "prettier/prettier": "error",
     "semi": ["error", "always"],
     "eqeqeq": ["error", "smart"],
-    "no-return-assign": 0
+    "no-return-assign": 0,
+    "node/no-unpublished-require": 0
   },
-  "plugins": ["jest"],
+  "plugins": ["jest", "prettier"],
   "env": {
-    "jest/globals": true
+    "jest/globals": true,
+    "node": true,
+    "commonjs": true,
+    "es6": true
   }
 }

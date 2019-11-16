@@ -6,8 +6,8 @@ const User = require('../models/User');
     email: email
     password: password
 */
-exports.create = async(ctx) => {
-  const createdUser = await User.create(ctx.request.body).catch((err) => {
+exports.create = async ctx => {
+  const createdUser = await User.create(ctx.request.body).catch(err => {
     if (err && err.code === 11000) {
       ctx.status = 422;
       ctx.body = 'User already exists';
@@ -23,11 +23,11 @@ exports.create = async(ctx) => {
 };
 
 /* Update user
-*/
-exports.update = async(ctx) => {
+ */
+exports.update = async ctx => {
   let { user } = ctx.state;
   user.set(ctx.request.body);
-  const updatedUser = await user.save().catch((err) => {
+  const updatedUser = await user.save().catch(err => {
     if (err && err.code === 11000) {
       ctx.status = 422;
       ctx.body = 'User already exists';
@@ -43,13 +43,13 @@ exports.update = async(ctx) => {
 };
 
 // Get token
-exports.token = async(ctx) => {
+exports.token = async ctx => {
   const { user } = ctx.state;
   const { token } = await user.generateToken();
   ctx.body = { token };
 };
 
-exports.deviceToken = async(ctx) => {
+exports.deviceToken = async ctx => {
   const { user } = ctx.state;
   const { token } = ctx.request.body;
   user.iOS.deviceTokens.addToSet(token);

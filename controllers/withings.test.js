@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('../config').mongo;
+const config = require('../config').mongo_test;
 const Token = require('../models/WithingsToken');
 const User = require('../models/User');
 const auth = require('../routes/middleware/auth');
@@ -41,7 +41,7 @@ const mockAuthCtx = {
         )
     }
   },
-  set: (k, v) => {
+  set: function(k, v) {
     this.req.headers[k] = v;
   }
 };
@@ -59,7 +59,7 @@ const mockWithingsCallbackCTX = {
 */
 
 beforeAll(async () => {
-  await await mongoose.connect(config.test_uri, {
+  await mongoose.connect(config.uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
@@ -68,17 +68,6 @@ beforeAll(async () => {
   if (token) {
     await token.remove();
   }
-});
-
-test('should add withings token', async () => {
-  const user = await User.create(mockUser);
-  mockData.user = user._id;
-  const token = await Token.create(mockData).catch(err => {
-    console.log('token create err: ' + err);
-  });
-  // console.log(token);
-  // console.log(user);
-  expect(token).toBeTruthy();
 });
 
 test('should log in', async () => {

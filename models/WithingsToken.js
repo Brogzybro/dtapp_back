@@ -3,13 +3,23 @@ const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
 const Token = new Schema({
-  access_token: { type: String },
-  user: { type: ObjectId, ref: 'User' },
-  expires_in: { type: Number },
-  token_type: { type: String },
-  scope: { type: String },
-  refresh_token: { type: String },
-  userid: { type: String },
+  user: {
+    type: ObjectId,
+    ref: 'User',
+    required: [true, 'Withings token must belong to a user'],
+    unique: true
+  },
+  data: {
+    type: {
+      access_token: { type: String },
+      expires_in: { type: Number },
+      token_type: { type: String },
+      scope: { type: String },
+      refresh_token: { type: String },
+      userid: { type: String }
+    },
+    required: true
+  },
   timestamp: { type: Date, default: Date.now }
 });
 

@@ -5,7 +5,9 @@ const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
 
 const routes = require('./routes/routes');
-const db = require('./db');
+
+const mongoConfig = require('./config').mongo;
+const db = require('./db').init(mongoConfig);
 
 const app = new Koa();
 const agenda = new Agenda();
@@ -21,7 +23,7 @@ app.use(
     }
   })
 );
-app.use(async(ctx) => {
+app.use(async ctx => {
   await send(ctx, 'swagger.json');
 });
 
