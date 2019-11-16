@@ -23,7 +23,7 @@ app.use(
     }
   })
 );
-app.use('/swagger.json', async ctx => {
+routes.get('/swagger.json', async ctx => {
   await send(ctx, 'swagger.json');
 });
 
