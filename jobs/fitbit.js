@@ -32,7 +32,10 @@ async function syncActivity(endpoint, activity, user, client) {
   let now = DateTime.local();
 
   let end = now.endOf('minute');
-  let start = now.minus({ days: 1 }).plus({ minutes: 1 }).startOf('minute');
+  let start = now
+    .minus({ days: 1 })
+    .plus({ minutes: 1 })
+    .startOf('minute');
 
   const latest = await Sample.findLatest({
     user: user.id,
@@ -45,7 +48,12 @@ async function syncActivity(endpoint, activity, user, client) {
     start = DateTime.max(start, last);
   }
 
-  const results = await client.activityTimeSeries(endpoint, start, end, granularity);
+  const results = await client.activityTimeSeries(
+    endpoint,
+    start,
+    end,
+    granularity
+  );
   const { dataset } = results[`activities-${endpoint}-intraday`];
   let samples = [];
 
