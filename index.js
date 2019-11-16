@@ -42,6 +42,9 @@ agenda.define('fitbit sync', (job, done) => {
   await agenda.every('20 minutes', 'fitbit sync');
   // await agenda.every('20 minutes', 'monitor heartrate');
 })().catch(console.error);
+
+console.log('Fitbit sync in progress');
+fitbitSync().catch(console.error);
 /*
 const monitors = require('./jobs/monitors');
 
