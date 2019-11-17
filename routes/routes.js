@@ -34,7 +34,7 @@ const router = new Router();
  *      description: Everything to do with withings
  */
 
-router.get('/', auth, async(ctx) => {
+router.get('/', auth, async ctx => {
   ctx.status = 204;
 });
 
