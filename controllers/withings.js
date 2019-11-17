@@ -1,7 +1,7 @@
 const config = require('../config').withings;
 const Withings = require('../lib/Withings');
 
-exports.auth = async(ctx) => {
+exports.auth = async ctx => {
   // const { token } = ctx.query;
   /*
   const user = await User.findByToken(token);
@@ -20,22 +20,20 @@ exports.auth = async(ctx) => {
  * @param ctx.query.code The authorization code
  * @param ctx.query.state The state
  */
-exports.callback = async(ctx) => {
+exports.callback = async ctx => {
   const { code, state } = ctx.query;
   const { clientID, clientSecret, redirectURI } = config;
   const { user } = ctx.state;
 
   // if(req.query)
   if (code) {
-    const data = await Withings.accessTokenRequest(
-      {
-        grant_type: 'authorization_code',
-        client_id: clientID,
-        client_secret: clientSecret,
-        code: code,
-        redirect_uri: redirectURI
-      }
-    ).catch((err) => {
+    const data = await Withings.accessTokenRequest({
+      grant_type: 'authorization_code',
+      client_id: clientID,
+      client_secret: clientSecret,
+      code: code,
+      redirect_uri: redirectURI
+    }).catch(err => {
       ctx.status = 400;
       ctx.body = err.message;
     });
