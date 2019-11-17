@@ -21,7 +21,7 @@ exports.auth = async ctx => {
  * @param ctx.query.state The state
  */
 exports.callback = async ctx => {
-  const { code, state } = ctx.query;
+  const { code } = ctx.query; // state
   const { clientID, clientSecret, redirectURI } = config;
   const { user } = ctx.state;
 
