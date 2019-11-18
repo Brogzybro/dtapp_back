@@ -28,13 +28,13 @@ describe('withings tests', () => {
     expect(user).toBeInstanceOf(Object);
   });
 
-  it('acessing "/withings/auth" without auth credentials should deny access', async () => {
+  it('accessing "/withings/auth" without auth credentials should deny access', async () => {
     const result = await supertest(server).get('/withings/auth');
     expect(result.status).toBe(401);
     expect(result.text).toMatch('Unauthorized');
   });
 
-  it('tests that auth redirects correctly', async () => {
+  it('accessing "withings/auth" should redirect to withings auth url', async () => {
     const result = await supertest(server)
       .get('/withings/auth')
       .auth(withingsTestUser.username, withingsTestUser.password);
@@ -42,7 +42,7 @@ describe('withings tests', () => {
     expect(result.header.location).toMatch(configWithings.authURL);
   });
 
-  it('acessing "/withings/callback" without auth credentials should deny access', async () => {
+  it('accessing "/withings/callback" without auth credentials should deny access', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .query({ code: 'test', state: 'test' });
@@ -50,7 +50,7 @@ describe('withings tests', () => {
     expect(result.text).toMatch('Unauthorized');
   });
 
-  it('withings wrong code should fail authrozation', async () => {
+  it('accessing "/withings/callback" with wrong code should fail', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .auth(withingsTestUser.username, withingsTestUser.password)
@@ -59,7 +59,7 @@ describe('withings tests', () => {
     expect(result.text).toMatch('Invalid authorization code');
   });
 
-  it('withings with no code parameter should respond with 400 and error message', async () => {
+  it('accessing "/withings/callback" with no code parameter should respond with 400 and error message', async () => {
     const result = await supertest(server)
       .get('/withings/callback')
       .auth(withingsTestUser.username, withingsTestUser.password)
