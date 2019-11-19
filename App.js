@@ -44,10 +44,6 @@ module.exports = mongoConfig => {
     // await agenda.every('20 minutes', 'monitor heartrate');
   })().catch(console.error);
 
-  (async () => {
-    console.log('Fitbit sync in progress');
-    await fitbitSync().catch(console.error);
-  })();
   /*
   const monitors = require('./jobs/monitors');
   
@@ -56,7 +52,5 @@ module.exports = mongoConfig => {
     monitors.heartRate().then(done).catch(console.error);
   });
   */
-  /*
-   */
   return app;
 };

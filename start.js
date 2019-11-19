@@ -5,4 +5,7 @@ const mongoConfig = require('./config').mongo;
 const app = require('./App')(mongoConfig);
 
 app.use(logger());
-app.listen(config.port);
+const server = app.listen(config.port);
+if (server) {
+  console.log('Server listening on: ' + config.port);
+}
