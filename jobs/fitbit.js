@@ -153,7 +153,7 @@ async function sync() {
 
   for await (const user of User.find()) {
     // Check that user actually has synced a fitbit account
-    if (!('accessToken' in user.fitbit)) continue;
+    if (!user.fitbit.accessToken) continue;
 
     const client = new FitbitClient(user);
     const profile = await client.profile();
