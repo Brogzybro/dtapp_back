@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const config = require('../config').mongo_test;
 const Token = require('../models/WithingsToken');
 const User = require('../models/User');
 const auth = require('../routes/middleware/auth');
-const app = require('../index');
 
+const mongoTestConfig = require('../config').mongo_test;
+const app = require('../index')(mongoTestConfig);
 let server;
 
 beforeAll(done => {
@@ -59,7 +59,7 @@ const mockWithingsCallbackCTX = {
 */
 // test
 beforeAll(async () => {
-  await mongoose.connect(config.uri, {
+  await mongoose.connect(mongoTestConfig.uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true

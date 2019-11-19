@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const app = require('../index');
 const User = require('../models/User');
 const tUtils = require('./testutils');
 
@@ -13,6 +12,8 @@ const testUser2 = {
   password: 'mysecretpasswoopedy'
 };
 
+const mongoTestConfig = require('../config').mongo_test;
+const app = require('../index')(mongoTestConfig);
 let server;
 
 beforeAll(done => {
