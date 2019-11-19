@@ -4,7 +4,7 @@ const User = require('../models/User');
 const auth = require('../routes/middleware/auth');
 
 const mongoTestConfig = require('../config').mongo_test;
-const app = require('../index')(mongoTestConfig);
+const app = require('../App')(mongoTestConfig);
 let server;
 
 beforeAll(done => {
