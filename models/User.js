@@ -48,6 +48,10 @@ User.method('authenticate', function(password) {
 
 // Generate temporary token
 User.method('generateToken', async function() {
+  const existingTokens = await Token.find({ user: this.id });
+  if (existingTokens) {
+    await Token.deleteMany({ user: this.id });
+  }
   const token = await Token.create({ user: this.id });
   return token;
 });
