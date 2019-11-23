@@ -67,7 +67,24 @@
         "description": "Adds a token to user (used for fitbit auth)",
         "tags": [
           "fitbit"
-        ]
+        ],
+        "responses": {
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "The token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/withings/auth": {
