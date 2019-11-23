@@ -94,6 +94,16 @@ router.patch('/user', auth, user.update);
  *      description: Adds a token to user (used for fitbit auth)
  *      tags:
  *        - fitbit
+ *      responses:
+ *        default:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  token:
+ *                    type: string
+ *                    description: The token
  */
 router.post('/user/token', auth, user.token);
 router.post('/user/ios/device', auth, user.deviceToken);
