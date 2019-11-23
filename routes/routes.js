@@ -2,6 +2,7 @@ const Router = require('koa-router');
 
 const errors = require('./middleware/errors');
 const auth = require('./middleware/auth');
+const adminauth = require('./middleware/adminauth');
 
 const healthkit = require('../controllers/healthkit');
 const fitbit = require('../controllers/fitbit');
@@ -129,6 +130,20 @@ router.get('/withings/auth', auth, withings.auth);
 router.get('/withings/callback', auth, withings.callback);
 
 router.get('/samples', auth, samples.list);
+
+router.get('/admin', adminauth, ctx => {
+  ctx.status = 200;
+  if (ctx.query && ctx.query.action) {
+    switch (ctx.query.action) {
+      case 'fitbitsync':
+        require('../jobs/fitbit')();
+        break;
+      default:
+        console.log('Unrecognized admin command');
+        break;
+    }
+  }
+});
 
 router.use(errors);
 

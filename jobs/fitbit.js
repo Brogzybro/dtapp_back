@@ -149,6 +149,7 @@ async function syncSleep(user, client) {
 }
 
 async function sync() {
+  console.log('[JOB FITBIT SYNC] Running...');
   const activities = Object.keys(fitbitActivities);
 
   for await (const user of User.find()) {
@@ -166,6 +167,7 @@ async function sync() {
 
     await syncSleep(user, client);
   }
+  console.log('[JOB FITBIT SYNC] Ended');
 }
 
 module.exports = sync;
