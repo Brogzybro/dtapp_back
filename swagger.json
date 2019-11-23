@@ -62,6 +62,14 @@
         }
       }
     },
+    "/user/token": {
+      "post": {
+        "description": "Adds a token to user (used for fitbit auth)",
+        "tags": [
+          "fitbit"
+        ]
+      }
+    },
     "/withings/auth": {
       "get": {
         "description": "Starts the authentication process for withings api",

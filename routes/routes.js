@@ -86,6 +86,15 @@ router.post('/user', user.create);
  */
 router.patch('/user', auth, user.update);
 
+/**
+ * @swagger
+ *
+ * /user/token:
+ *    post:
+ *      description: Adds a token to user (used for fitbit auth)
+ *      tags:
+ *        - fitbit
+ */
 router.post('/user/token', auth, user.token);
 router.post('/user/ios/device', auth, user.deviceToken);
 
