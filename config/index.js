@@ -3,6 +3,7 @@ const { env } = process;
 
 const config = {
   port: env.PORT || 3000,
+  admin_pass: env.ADMIN_PASS,
 
   mongo: {
     uri: env.MONGO_URL
