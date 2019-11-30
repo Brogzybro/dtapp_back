@@ -14,7 +14,9 @@
     "lint": "eslint .",
     "test": "jest --detectOpenHandles",
     "swaggerjsdoc": "swagger-jsdoc -d swaggerDef.js",
-    "gendoc": "openapi-generator generate -i swagger.json -g html -o doc/test"
+    "gendoc": "openapi-generator generate -i swagger.json -g html -o doc/test",
+    "genapibase": "openapi-generator generate -i swagger.json -g dart -o dartapi/test",
+    "genapi": "npm run genapibase && node scr_replaceDartApiIP.js dartapi/test"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.0.3",
