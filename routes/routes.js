@@ -97,6 +97,7 @@ router.patch('/user', auth, user.update);
  *        - fitbit
  *      responses:
  *        default:
+ *          description: Object containing the token
  *          content:
  *            application/json:
  *              schema:

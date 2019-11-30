@@ -70,6 +70,7 @@
         ],
         "responses": {
           "default": {
+            "description": "Object containing the token",
             "content": {
               "application/json": {
                 "schema": {
