@@ -1,0 +1,3 @@
+[submodule "dtapp_shared"]
+	path = dtapp_shared
+	url = https://github.com/Zeiser/dtapp_shared.git
