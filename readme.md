@@ -1,60 +1,17 @@
-# Test
-Test test test test test test
+# Scripts
 
-## Test 1-1
-Test test test test test
+## swaggerjsdoc
 
-## Test 1-2
-Test test test test test
+Generate swagger.json from swaggerDef.js and project.
 
-## Test 1-3
-Test test test test test
+## genapi
 
-## Test 1-4
-Test test test test test
+Generates dart code using openapi generator
 
-# Test
-Test test test test test test
+### genapibase
 
-## Test 2-1
-Test test test test test
+The base script, does first part of genapi
 
-## Test 2-2
-Test test test test test
+# dtapp_shared
 
-## Test 2-3
-Test test test test test
-
-## Test 2-4
-Test test test test test
-
-# Test
-Test test test test test test
-
-## Test 3-1
-Test test test test test
-
-## Test 3-2
-Test test test test test
-
-## Test 3-3
-Test test test test test
-
-## Test 3-4
-Test test test test test
-
-# Test
-Test test test test test test
-
-## Test 4-1
-Test test test test test
-
-## Test 4-2
-Test test test test test
-
-## Test 4-3
-Test test test test test
-
-## Test 4-4
-Test test test test test
-
+Needs to be shared between frontend and backend. Should contain swagger.json for backend to host, and for frontend to generate api.
