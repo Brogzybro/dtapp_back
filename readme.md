@@ -2,11 +2,11 @@
 
 ## swaggerjsdoc
 
-Generate swagger.json from swaggerDef.js and project.
+Generate swagger.json from swaggerDef.js and project. (meant for backend)
 
 ## genapi
 
-Generates dart code using openapi generator
+Generates dart code using openapi generator (meant or client/frontend)
 
 ### genapibase
 
