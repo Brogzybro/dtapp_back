@@ -15,7 +15,13 @@ const router = new Router();
 /**
  * @swagger
  *
+ *
+ *
  * components:
+ *    securitySchemes:
+ *      basicAuth:
+ *        type: http
+ *        scheme: basic
  *    schemas:
  *      User:
  *        type: object
@@ -35,6 +41,20 @@ const router = new Router();
  *      description: Everything to do with withings
  */
 
+/**
+ * @swagger
+ *
+ * /:
+ *   get:
+ *     security:
+ *        - basicAuth: []
+ *     description: Default route (used for tesing login)
+ *     tags:
+ *       - user
+ *     responses:
+ *       204:
+ *         description: Success
+ */
 router.get('/', auth, async ctx => {
   ctx.status = 204;
 });
@@ -92,6 +112,8 @@ router.patch('/user', auth, user.update);
  *
  * /user/token:
  *    post:
+ *      security:
+ *        - basicAuth: []
  *      description: Adds a token to user (used for fitbit auth)
  *      tags:
  *        - fitbit

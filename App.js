@@ -25,7 +25,7 @@ module.exports = mongoConfig => {
     })
   );
   routes.get('/swagger.json', async ctx => {
-    await send(ctx, 'swagger.json');
+    await send(ctx, 'dtapp_shared/swagger.json');
   });
 
   agenda.mongo(db);
