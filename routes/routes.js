@@ -182,7 +182,7 @@ router.get('/withings/callback', auth, withings.callback);
  *      tags:
  *        - samples
  *      parameters:
- *        - in: path
+ *        - in: query
  *          name: limit
  *          schema:
  *            type: integer
