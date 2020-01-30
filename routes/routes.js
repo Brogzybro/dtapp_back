@@ -152,6 +152,27 @@ router.get('/fitbit/callback', fitbit.callback);
 router.get('/withings/auth', auth, withings.auth);
 router.get('/withings/callback', auth, withings.callback);
 
+/**
+ * @swagger
+ *
+ * /samples:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Get samples
+ *      tags:
+ *        - samples
+ *      parameters:
+ *        - in: path
+ *          name: limit
+ *          schema:
+ *            type: integer
+ *          required: false
+ *          description: Numeric limit of entries to retrieve
+ *      responses:
+ *        200:
+ *          description: Returns samples
+ */
 router.get('/samples', auth, samples.list);
 
 router.get('/admin', adminauth, ctx => {
