@@ -52,6 +52,14 @@ const router = new Router();
  *            type: string
  *          __v:
  *            type: integer
+ *      Type:
+ *        type: string
+ *        enum:
+ *          - heartRate
+ *          - distance
+ *          - elevation
+ *          - stepCount
+ *          - sleep
  *
  * tags:
  *    - name: user
@@ -188,6 +196,30 @@ router.get('/withings/callback', auth, withings.callback);
  *            type: integer
  *          required: false
  *          description: Numeric limit of entries to retrieve
+ *        - in: query
+ *          name: offset
+ *          schema:
+ *            type: integer
+ *          required: false
+ *          description: Numeric offset of entries to skip
+ *        - in: query
+ *          name: type
+ *          schema:
+ *              $ref: '#/components/schemas/Type'
+ *          required: false
+ *          description: Data type
+ *        - in: query
+ *          name: startDate
+ *          schema:
+ *            type: int
+ *          required: false
+ *          description: Start date to filter after
+ *        - in: query
+ *          name: endDate
+ *          schema:
+ *            type: int
+ *          required: false
+ *          description: End date to filter before
  *      responses:
  *        default:
  *          description: Sample entries requested
