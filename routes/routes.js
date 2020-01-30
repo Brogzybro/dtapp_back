@@ -33,6 +33,25 @@ const router = new Router();
  *            type: string
  *          password:
  *            type: string
+ *      Sample:
+ *        type: object
+ *        properties:
+ *          _id:
+ *            type: string
+ *          user:
+ *            type: string
+ *          value:
+ *            type: number
+ *          startDate:
+ *            type: integer
+ *          endDate:
+ *            type: integer
+ *          type:
+ *            type: string
+ *          source:
+ *            type: string
+ *          __v:
+ *            type: integer
  *
  * tags:
  *    - name: user
@@ -170,8 +189,14 @@ router.get('/withings/callback', auth, withings.callback);
  *          required: false
  *          description: Numeric limit of entries to retrieve
  *      responses:
- *        200:
- *          description: Returns samples
+ *        default:
+ *          description: Sample entries requested
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Sample'
  */
 router.get('/samples', auth, samples.list);
 
