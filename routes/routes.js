@@ -33,6 +33,14 @@ const router = new Router();
  *            type: string
  *          password:
  *            type: string
+ *      Type:
+ *        type: string
+ *        enum:
+ *          - heartRate
+ *          - distance
+ *          - elevation
+ *          - stepCount
+ *          - sleep
  *      Sample:
  *        type: object
  *        properties:
@@ -47,19 +55,11 @@ const router = new Router();
  *          endDate:
  *            type: integer
  *          type:
- *            type: string
+ *            $ref: '#/components/schemas/Type'
  *          source:
  *            type: string
  *          __v:
  *            type: integer
- *      Type:
- *        type: string
- *        enum:
- *          - heartRate
- *          - distance
- *          - elevation
- *          - stepCount
- *          - sleep
  *
  * tags:
  *    - name: user
