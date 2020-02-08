@@ -161,6 +161,25 @@ router.post('/user/ios/device', auth, user.deviceToken);
 
 router.post('/healthkit', auth, healthkit.sync);
 
+/**
+ * @swagger
+ *
+ * /fitbit/auth:
+ *    get:
+ *      description: Auth fitbit
+ *      tags:
+ *        - fitbit
+ *      parameters:
+ *        - in: query
+ *          name: token
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: User token retrieved from /user/token
+ *      responses:
+ *        302:
+ *          description: Redirect to fitbit auth website
+ */
 router.get('/fitbit/auth', fitbit.auth);
 router.get('/fitbit/callback', fitbit.callback);
 

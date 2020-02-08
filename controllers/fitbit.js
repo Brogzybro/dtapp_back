@@ -17,5 +17,6 @@ exports.callback = async ctx => {
 
   const client = new FitbitClient(user);
   await client.callback(code);
-  ctx.redirect('healthscraper://callback');
+  ctx.body = 'Fitbit connected';
+  ctx.status = 201;
 };
