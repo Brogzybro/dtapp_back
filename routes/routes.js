@@ -188,6 +188,8 @@ router.get('/fitbit/callback', fitbit.callback);
  *
  * /fitbit/isauthorized:
  *    get:
+ *      security:
+ *        - basicAuth: []
  *      description: Check if user has fitbit authorized
  *      tags:
  *        - fitbit
