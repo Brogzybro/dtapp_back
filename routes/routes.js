@@ -186,6 +186,25 @@ router.get('/fitbit/callback', fitbit.callback);
 /**
  * @swagger
  *
+ * /fitbit/isauthorized:
+ *    get:
+ *      description: Check if user has fitbit authorized
+ *      tags:
+ *        - fitbit
+ *      responses:
+ *        200:
+ *          description: Is the user authorized
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: boolean
+ *                description: Is valid
+ */
+router.get('/fitbit/isauthorized', auth, fitbit.checkTokenValidity);
+
+/**
+ * @swagger
+ *
  * /withings/auth:
  *    get:
  *      description: Starts the authentication process for withings api

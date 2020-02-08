@@ -16,6 +16,7 @@ const config = {
   fitbit: {
     apiURL: 'https://api.fitbit.com',
     tokenURL: 'https://api.fitbit.com/oauth2/token',
+    tokenStateURL: 'https://api.fitbit.com/1.1/oauth2/introspect',
     authURL: 'https://www.fitbit.com/oauth2/authorize',
     clientID: env.FITBIT_CLIENT_ID,
     clientSecret: env.FITBIT_CLIENT_SECRET,
