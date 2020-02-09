@@ -41,6 +41,8 @@ const router = new Router();
  *          - elevation
  *          - stepCount
  *          - sleep
+ *          - diastolicBloodPressure
+ *          - systolicBloodPressure
  *      Sample:
  *        type: object
  *        properties:
