@@ -218,8 +218,8 @@ router.get('/fitbit/isauthorized', auth, fitbit.checkTokenValidity);
  *        302:
  *          description: Redirects to withings website
  */
-router.get('/withings/auth', auth, withings.auth);
-router.get('/withings/callback', auth, withings.callback);
+router.get('/withings/auth', withings.auth);
+router.get('/withings/callback', withings.callback);
 
 /**
  * @swagger

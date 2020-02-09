@@ -1,5 +1,6 @@
 const config = require('../config').withings;
 const Withings = require('../lib/Withings');
+const User = require('../models/User');
 
 exports.checkTokenValidity = async ctx => {
   const { user } = ctx.state;
@@ -8,15 +9,12 @@ exports.checkTokenValidity = async ctx => {
 };
 
 exports.auth = async ctx => {
-  // const { token } = ctx.query;
-  /*
+  const { token } = ctx.query;
   const user = await User.findByToken(token);
   ctx.assert(user, 401);
 
-  const client = new FitbitClient(user);
-  */
   // ctx.redirect(authURL(token));
-  ctx.redirect(Withings.authURL());
+  ctx.redirect(Withings.authURL(token));
 };
 
 /**
@@ -27,9 +25,10 @@ exports.auth = async ctx => {
  * @param ctx.query.state The state
  */
 exports.callback = async ctx => {
-  const { code } = ctx.query; // state
+  const { state, code } = ctx.query; // state
   const { clientID, clientSecret, redirectURI } = config;
-  const { user } = ctx.state;
+  const user = await User.findByToken(state);
+  ctx.assert(user, 401);
 
   // if(req.query)
   if (code) {
