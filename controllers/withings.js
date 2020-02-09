@@ -1,6 +1,12 @@
 const config = require('../config').withings;
 const Withings = require('../lib/Withings');
 
+exports.checkTokenValidity = async ctx => {
+  const { user } = ctx.state;
+  ctx.body = await Withings.checkTokenValidity(user);
+  ctx.status = 200;
+};
+
 exports.auth = async ctx => {
   // const { token } = ctx.query;
   /*

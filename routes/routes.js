@@ -222,6 +222,27 @@ router.get('/withings/callback', auth, withings.callback);
 /**
  * @swagger
  *
+ * /withings/isauthorized:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Check if user has withings authorized
+ *      tags:
+ *        - withings
+ *      responses:
+ *        200:
+ *          description: Is the user authorized
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: boolean
+ *                description: Is valid
+ */
+router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
+
+/**
+ * @swagger
+ *
  * /samples:
  *    get:
  *      security:

@@ -28,6 +28,7 @@ const config = {
     authURL: 'https://account.withings.com/oauth2_user/authorize2',
     tokenURL: 'https://account.withings.com/oauth2/token',
     measureUrl: 'https://wbsapi.withings.net/measure',
+    getDeviceURL: 'https://wbsapi.withings.net/v2/user?action=getdevice',
     clientID: env.WITHINGS_CLIENT_ID,
     clientSecret: env.WITHINGS_CLIENT_SECRET,
     scope: 'user.info,user.metrics',
