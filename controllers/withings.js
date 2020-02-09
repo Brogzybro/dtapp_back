@@ -46,7 +46,7 @@ exports.callback = async ctx => {
     if (data) {
       Withings.newToken(user, data);
       ctx.status = 201;
-      ctx.body = 'Token added';
+      ctx.body = 'Withings authorized';
     }
   } else {
     ctx.status = 400;
