@@ -38,9 +38,16 @@ module.exports = mongoConfig => {
       .then(done)
       .catch(console.error);
   });
+  agenda.define('withings sync', (job, done) => {
+    console.log('Withings sync in progress');
+    require('./jobs/withings')()
+      .then(done)
+      .catch(console.error);
+  });
   (async () => {
     await agenda.start();
     await agenda.every('20 minutes', 'fitbit sync');
+    await agenda.every('20 minutes', 'withings sync');
     // await agenda.every('20 minutes', 'monitor heartrate');
   })().catch(console.error);
 

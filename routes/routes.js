@@ -279,6 +279,9 @@ router.get('/admin', adminauth, ctx => {
       case 'fitbitsync':
         require('../jobs/fitbit')();
         break;
+      case 'withingssync':
+        require('../jobs/withings')();
+        break;
       default:
         console.log('Unrecognized admin command');
         break;
