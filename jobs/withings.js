@@ -66,8 +66,8 @@ async function sync() {
     );
   }
 
-  console.log("Adding " + samples.length + " samples.");
-  console.log(samples);
+  console.log("[JOB WITHINGS SYNC]", "Adding " + samples.length + " samples.");
+  console.log("[JOB WITHINGS SYNC]", samples);
   await Sample.insertMany(samples);
   console.log("[JOB WITHINGS SYNC] Ended");
 }
