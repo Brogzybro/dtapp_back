@@ -17,8 +17,8 @@ async function refreshUserToken(userId, refreshToken) {
       .post(tokenURL)
       .type('form')
       .send(queries);
-    console.log(res);
     console.log('yooo');
+    console.log(res);
     if (res.status === 200) {
       const data = res.body;
       console.log(data);
@@ -38,19 +38,13 @@ async function refreshUserToken(userId, refreshToken) {
 }
 
 async function sync() {
+  console.log("[JOB WITHINGS SYNC] Running...");
   const { measureUrl } = config.withings;
   const tokens = await Token.find({});
   const samples = [];
   for await (const token of tokens) {
     const { data, user: userId } = token;
     const { access_token: accessToken, refresh_token: refreshToken } = data;
-
-    /*
-    await Sample.deleteMany({
-      type: { $in: ['diastolicBloodPressure', 'systolicBloodPressure'] }
-    });
-    return;
-    */
 
     samples.push(
       ...(await syncMeasure(
@@ -72,9 +66,10 @@ async function sync() {
     );
   }
 
-  // console.log(tokens);
+  console.log("Adding " + samples.length + " samples.");
   console.log(samples);
   await Sample.insertMany(samples);
+  console.log("[JOB WITHINGS SYNC] Ended");
 }
 
 const meastypeMap = {
@@ -95,11 +90,10 @@ async function syncMeasure(
     type: type,
     source: 'withings'
   });
-  console.log(latest);
+
   var latestTime = null;
   if (latest) {
     latestTime = latest.startDate.getTime() / 1000 + 1;
-    console.log(latestTime);
   }
 
   try {
@@ -119,8 +113,6 @@ async function syncMeasure(
 
     // Parsing is broken for some reason, manually parse instead
     const { status, body } = JSON.parse(res.text);
-    console.log(res.text);
-    console.log(status);
 
     if (status === 401) {
       refreshUserToken(userId, refreshToken);
@@ -149,7 +141,6 @@ async function syncMeasure(
       );
     });
     return samples;
-    // console.log(measures);
   } catch (error) {
     console.log('withings job sync err:' + error);
     return [];
