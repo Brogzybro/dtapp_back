@@ -9,6 +9,7 @@ const fitbit = require('../controllers/fitbit');
 const withings = require('../controllers/withings');
 const user = require('../controllers/user');
 const samples = require('../controllers/samples');
+const Sample = require('../models/Sample');
 
 const router = new Router();
 
@@ -295,22 +296,7 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  */
 router.get('/samples', auth, samples.list);
 
-router.get('/admin', adminauth, ctx => {
-  ctx.status = 200;
-  if (ctx.query && ctx.query.action) {
-    switch (ctx.query.action) {
-      case 'fitbitsync':
-        require('../jobs/fitbit')();
-        break;
-      case 'withingssync':
-        require('../jobs/withings')();
-        break;
-      default:
-        console.log('Unrecognized admin command');
-        break;
-    }
-  }
-});
+router.get('/admin', adminauth, require('../controllers/admin').adminCommand);
 
 router.use(errors);
 
