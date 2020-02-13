@@ -2,43 +2,10 @@ const request = require('superagent');
 const config = require('../config');
 const Token = require('../models/WithingsToken');
 const Sample = require('../models/Sample');
-
-async function refreshUserToken(userId, refreshToken) {
-  const { clientID, clientSecret, tokenURL } = config.withings;
-  const queries = {
-    grant_type: 'refresh_token',
-    client_id: clientID,
-    client_secret: clientSecret,
-    refresh_token: refreshToken
-  };
-
-  try {
-    const res = await request
-      .post(tokenURL)
-      .type('form')
-      .send(queries);
-    console.log('yooo');
-    console.log(res);
-    if (res.status === 200) {
-      const data = res.body;
-      console.log(data);
-      await Token.updateMany(
-        { user: userId },
-        { data: data },
-        {
-          upsert: true,
-          setDefaultsOnInsert: true
-        }
-      );
-    }
-  } catch (error) {
-    console.log('withings refresh token err: ' + error);
-    console.log(error.text);
-  }
-}
+const Withings = require('../lib/Withings');
 
 async function sync() {
-  console.log("[JOB WITHINGS SYNC] Running...");
+  console.log('[JOB WITHINGS SYNC] Running...');
   const { measureUrl } = config.withings;
   const tokens = await Token.find({});
   const samples = [];
@@ -66,10 +33,10 @@ async function sync() {
     );
   }
 
-  console.log("[JOB WITHINGS SYNC]", "Adding " + samples.length + " samples.");
-  console.log("[JOB WITHINGS SYNC]", samples);
+  console.log('[JOB WITHINGS SYNC]', 'Adding ' + samples.length + ' samples.');
+  console.log('[JOB WITHINGS SYNC]', samples);
   await Sample.insertMany(samples);
-  console.log("[JOB WITHINGS SYNC] Ended");
+  console.log('[JOB WITHINGS SYNC] Ended');
 }
 
 const meastypeMap = {
@@ -115,8 +82,8 @@ async function syncMeasure(
     const { status, body } = JSON.parse(res.text);
 
     if (status === 401) {
-      refreshUserToken(userId, refreshToken);
-      return sync();
+      await Withings.refreshUserToken(userId, refreshToken);
+      return await sync();
     }
 
     // console.log(body);
