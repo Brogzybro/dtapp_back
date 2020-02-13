@@ -3,6 +3,7 @@ const bodyparser = require('koa-bodyparser');
 const send = require('koa-send');
 const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
+const cors = require('koa2-cors');
 
 const routes = require('./routes/routes');
 
@@ -13,6 +14,7 @@ module.exports = mongoConfig => {
   const agenda = new Agenda();
   const db = DB.init(mongoConfig);
 
+  app.use(cors());
   app.use(bodyparser({ jsonLimit: 10000000 }));
   app.use(routes.routes());
   app.use(routes.allowedMethods());
