@@ -52,7 +52,9 @@ const router = new Router();
  *          user:
  *            type: string
  *          value:
- *            type: number
+ *            oneOf:
+ *              - type: number
+ *              - type: object
  *          startDate:
  *            type: integer
  *          endDate:
