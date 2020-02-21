@@ -8,7 +8,9 @@ const Sample = new Schema({
   value: Mixed,
   startDate: Date,
   endDate: Date,
-  source: String
+  source: String,
+  created: Date,
+  grpid: Number
 });
 
 // Allow arbitrary metadata
@@ -16,6 +18,11 @@ Sample.set('strict', false);
 
 Sample.static('findLatest', function(conditions) {
   return this.findOne(conditions).sort({ startDate: -1 });
+});
+
+// For withings, they use created in addition to the date of the actual measure/sample
+Sample.static('findLatestCreated', function(conditions) {
+  return this.findOne(conditions).sort({ created: -1 });
 });
 
 Sample.set('toJSON', {

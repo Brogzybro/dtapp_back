@@ -11,7 +11,9 @@ exports.adminCommand = async ctx => {
         require('../jobs/withings')();
         break;
       case 'wipewithings':
-        await Sample.deleteMany({ type: { $in: ['systolicBloodPressure', 'diastolicBloodPressure'] } });
+        await Sample.deleteMany({
+          type: { $in: ['systolicBloodPressure', 'diastolicBloodPressure'] }
+        });
         break;
       default:
         console.log('Unrecognized admin command');

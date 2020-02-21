@@ -13,64 +13,67 @@ async function sync() {
     const { data, user: userId } = token;
     const { access_token: accessToken, refresh_token: refreshToken } = data;
 
-    samples.push(
-      ...(await syncMeasure(
-        userId,
-        'diastolicBloodPressure',
-        accessToken,
-        refreshToken,
-        measureUrl
-      ))
-    );
-    samples.push(
-      ...(await syncMeasure(
-        userId,
-        'systolicBloodPressure',
-        accessToken,
-        refreshToken,
-        measureUrl
-      ))
-    );
+    for await (const measureEntry of MEASURES) {
+      samples.push(
+        ...(await syncMeasure(
+          userId,
+          measureEntry,
+          accessToken,
+          refreshToken,
+          measureUrl
+        ))
+      );
+    }
   }
 
-  console.log('[JOB WITHINGS SYNC]', 'Adding ' + samples.length + ' samples.');
   console.log('[JOB WITHINGS SYNC]', samples);
+  console.log('[JOB WITHINGS SYNC]', 'Added ' + samples.length + ' samples.');
   await Sample.insertMany(samples);
   console.log('[JOB WITHINGS SYNC] Ended');
 }
 
-const meastypeMap = {
-  diastolicBloodPressure: 9,
-  systolicBloodPressure: 10
-};
+const MEASURES = [
+  {
+    type: 'diastolicBloodPressure',
+    value: 9
+  },
+  {
+    type: 'systolicBloodPressure',
+    value: 10
+  }
+];
 
 async function syncMeasure(
   userId,
-  type,
+  measureEntry,
   accessToken,
   refreshToken,
   measureUrl
 ) {
   const samples = [];
-  const latest = await Sample.findLatest({
+  const latest = await Sample.findLatestCreated({
     user: userId,
-    type: type,
+    type: measureEntry.type,
     source: 'withings'
   });
 
   var latestTime = null;
   if (latest) {
-    latestTime = latest.startDate.getTime() / 1000 + 1;
+    // Because the withings api is retarded and does not track lastupdate properly
+    // we add 5 seconds, we might lose a measure because of this, but fuck it
+    latestTime = latest.created.getTime() / 1000 + 5; // + 5;
+    console.log('latest time: ' + latestTime);
   }
 
   try {
     // request.parse['text/json'] = text => JSON.parse(text);
     const queries = {
       action: 'getmeas',
-      meastype: meastypeMap[type]
+      meastype: measureEntry.value
     };
     if (latestTime) {
       queries.lastupdate = latestTime;
+      // queries.lastupdate = 1570458535;
     }
 
     const res = await request
@@ -88,10 +91,14 @@ async function syncMeasure(
 
     // console.log(body);
     // console.log(body.measuregrps.length);
+    console.log(body);
     const measures = body.measuregrps.map(grp => {
+      console.log(grp);
       return {
+        grpid: grp.grpid,
         date: new Date(grp.date * 1000),
-        value: grp.measures[0].value
+        value: grp.measures[0].value,
+        created: new Date(grp.created * 1000)
       };
     });
 
@@ -99,11 +106,13 @@ async function syncMeasure(
       samples.push(
         new Sample({
           user: userId,
-          type: type,
+          grpid: measure.grpid,
+          type: measureEntry.type,
           value: measure.value,
           startDate: measure.date,
           endDate: measure.date,
-          source: 'withings'
+          source: 'withings',
+          created: measure.created
         })
       );
     });
