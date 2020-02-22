@@ -44,6 +44,7 @@ const router = new Router();
  *          - sleep
  *          - diastolicBloodPressure
  *          - systolicBloodPressure
+ *          - ecg
  *      Sample:
  *        type: object
  *        properties:
@@ -52,9 +53,7 @@ const router = new Router();
  *          user:
  *            type: string
  *          value:
- *            oneOf:
- *              - type: number
- *              - type: object
+ *            type: object
  *          startDate:
  *            type: integer
  *          endDate:
