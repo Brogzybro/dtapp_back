@@ -36,7 +36,8 @@
     "mongoose": "^5.8.10",
     "request": "^2.88.0",
     "superagent": "^5.2.1",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^1.0.8-4.2.2",

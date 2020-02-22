@@ -3,15 +3,19 @@ const config = require('../config');
 const Token = require('../models/WithingsToken');
 const Sample = require('../models/Sample');
 const Withings = require('../lib/Withings');
+const logger = config.winston.loggers.withings;
 
 async function sync() {
-  console.log('[JOB WITHINGS SYNC] Running...');
+  logger.info('[JOB] Running...');
+  logger.error('bro');
   const { measureUrl } = config.withings;
   const tokens = await Token.find({});
   const samples = [];
   for await (const token of tokens) {
     const { data, user: userId } = token;
     const { access_token: accessToken, refresh_token: refreshToken } = data;
+
+    logger.info('yooo');
 
     samples.push(...(await syncHeart(userId, accessToken, refreshToken)));
 
@@ -28,10 +32,10 @@ async function sync() {
     }
   }
 
-  console.log('[JOB WITHINGS SYNC]', samples);
-  console.log('[JOB WITHINGS SYNC]', 'Added ' + samples.length + ' samples.');
+  logger.verbose('[JOB] Samples: %o', samples);
+  logger.info('[JOB] Added ' + samples.length + ' samples.');
   await Sample.insertMany(samples);
-  console.log('[JOB WITHINGS SYNC] Ended');
+  logger.info('[JOB] Ended');
 }
 
 async function syncHeart(userId, accessToken, refreshToken) {
@@ -47,12 +51,12 @@ async function syncHeart(userId, accessToken, refreshToken) {
   const { status, body } = JSON.parse(res.text);
 
   if (status === 401) {
-    console.log('status 401');
+    logger.error('status 401 (syncHeart)');
     await Withings.refreshUserToken(userId, refreshToken);
     return await sync();
   }
 
-  // console.log(body);
+  // logger.info(body);
 
   const ecgRefs = body.series.map(val => {
     return {
@@ -61,7 +65,7 @@ async function syncHeart(userId, accessToken, refreshToken) {
     };
   });
 
-  // console.log(ecgRefs);
+  // logger.info(ecgRefs);
 
   const ecgs = [];
   for await (const ecgRef of ecgRefs) {
@@ -71,8 +75,8 @@ async function syncHeart(userId, accessToken, refreshToken) {
         .auth(accessToken, { type: 'bearer' })
         .query({ signalid: ecgRef.signalid });
       const { status: statuss, body: bodyy } = JSON.parse(ress.text);
-      console.log(statuss);
-      console.log(bodyy);
+      logger.verbose('statuss: %o', statuss);
+      logger.verbose('bodyy: %o', bodyy);
       ecgs.push({
         timestamp: ecgRef.timestamp,
         signalid: ecgRef.signalid,
@@ -81,7 +85,7 @@ async function syncHeart(userId, accessToken, refreshToken) {
         wearposition: bodyy.wearposition
       });
     } catch (error) {
-      console.log(error);
+      logger.info(error);
     }
   }
 
@@ -132,7 +136,7 @@ async function syncMeasure(
     // Because the withings api is retarded and does not track lastupdate properly
     // we add 5 seconds, we might lose a measure because of this, but fuck it
     latestTime = latest.created.getTime() / 1000 + 5; // + 5;
-    // console.log('latest time: ' + latestTime);
+    // logger.info('latest time: ' + latestTime);
   }
 
   try {
@@ -155,12 +159,13 @@ async function syncMeasure(
     const { status, body } = JSON.parse(res.text);
 
     if (status === 401) {
+      logger.error('status 401 (syncMeasure)');
       await Withings.refreshUserToken(userId, refreshToken);
       return await sync();
     }
 
-    // console.log(body);
-    // console.log(body.measuregrps.length);
+    // logger.info(body);
+    // logger.info(body.measuregrps.length);
     const measures = body.measuregrps.map(grp => {
       return {
         grpid: grp.grpid,
@@ -186,7 +191,7 @@ async function syncMeasure(
     });
     return samples;
   } catch (error) {
-    console.log('withings job sync err:' + error);
+    logger.info('withings job sync err:' + error);
     return [];
   }
 }

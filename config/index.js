@@ -1,4 +1,21 @@
 require('dotenv').config();
+const winston = require('winston');
+
+const logFormat = winston.format.combine(
+  winston.format.timestamp({
+    format: 'YYYY-MM-DD HH:mm:ss'
+  }),
+  winston.format.splat(),
+  winston.format.printf((info, opts) => {
+    return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
+  })
+);
+
+const logFormatWithings = winston.format.combine(
+  winston.format.label({ label: 'Withings' }),
+  logFormat
+);
+
 const { env } = process;
 
 const config = {
@@ -42,6 +59,32 @@ const config = {
     APNKeyID: env.APPLE_APN_KEY_ID,
     teamID: env.APPLE_TEAM_ID,
     bundleID: env.APPLE_BUNDLE_ID
+  },
+
+  winston: {
+    loggers: {
+      withings: winston.createLogger({
+        levels: {
+          error: 0,
+          warn: 1,
+          test: 2,
+          info: 3,
+          verbose: 4,
+          debug: 5
+        },
+        transports: [
+          new winston.transports.Console({
+            format: logFormatWithings,
+            level: 'info'
+          }),
+          new winston.transports.File({
+            filename: 'mylog2.log',
+            format: logFormatWithings,
+            level: 'debug'
+          })
+        ]
+      })
+    }
   }
 };
 

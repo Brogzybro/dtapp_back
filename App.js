@@ -5,14 +5,27 @@ const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
 const cors = require('koa2-cors');
 
+// Limit array length prints to 10
+require('util').inspect.defaultOptions.maxArrayLength = 10;
+
 const routes = require('./routes/routes');
 
 const DB = require('./db');
+
+const logger = require('./config').winston.loggers.withings;
+
+function initWinston() {
+  logger.error('yo error');
+  logger.info('yo error');
+  logger.warn('yo warn');
+}
 
 module.exports = mongoConfig => {
   const app = new Koa();
   const agenda = new Agenda();
   const db = DB.init(mongoConfig);
+
+  initWinston();
 
   app.use(cors());
   app.use(bodyparser({ jsonLimit: 10000000 }));
