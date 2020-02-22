@@ -10,9 +10,14 @@ exports.adminCommand = async ctx => {
       case 'withingssync':
         require('../jobs/withings')();
         break;
-      case 'wipewithings':
+      case 'withingswipebp':
         await Sample.deleteMany({
           type: { $in: ['systolicBloodPressure', 'diastolicBloodPressure'] }
+        });
+        break;
+      case 'withingswipeheart':
+        await Sample.deleteMany({
+          type: 'ecg'
         });
         break;
       default:
