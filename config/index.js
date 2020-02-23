@@ -1,20 +1,5 @@
 require('dotenv').config();
-const winston = require('winston');
-
-const logFormat = winston.format.combine(
-  winston.format.timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss'
-  }),
-  winston.format.splat(),
-  winston.format.printf((info, opts) => {
-    return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
-  })
-);
-
-const logFormatWithings = winston.format.combine(
-  winston.format.label({ label: 'Withings' }),
-  logFormat
-);
+const loggerUtil = require('../util/loggerUtil');
 
 const { env } = process;
 
@@ -63,27 +48,9 @@ const config = {
 
   winston: {
     loggers: {
-      withings: winston.createLogger({
-        levels: {
-          error: 0,
-          warn: 1,
-          test: 2,
-          info: 3,
-          verbose: 4,
-          debug: 5
-        },
-        transports: [
-          new winston.transports.Console({
-            format: logFormatWithings,
-            level: 'info'
-          }),
-          new winston.transports.File({
-            filename: 'mylog2.log',
-            format: logFormatWithings,
-            level: 'debug'
-          })
-        ]
-      })
+      withings: loggerUtil.basicLogger('withings.log', 'Withings'),
+      fitbit: loggerUtil.basicLogger('fitbit.log', 'Fitbit'),
+      default: loggerUtil.basicLogger('general.log', 'General')
     }
   }
 };

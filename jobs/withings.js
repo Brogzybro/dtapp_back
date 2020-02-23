@@ -38,23 +38,58 @@ async function sync() {
   logger.info('[JOB] Ended');
 }
 
+/**
+ *
+ * @param {request.SuperAgentRequest} request The put together request
+ */
+async function withingsRequest(
+  request,
+  userId,
+  accessToken,
+  refreshToken,
+  attempt = 1
+) {
+  const res = await request.auth(accessToken, { type: 'bearer' });
+
+  // Parsing is broken for some reason, manually parse instead
+  const { status, body } = JSON.parse(res.text);
+
+  if (status === 401) {
+    if (attempt > 3)
+      throw new Error(
+        'Failed withings auth after 3 failed attempts (' +
+          userId +
+          ', ' +
+          accessToken +
+          ', ' +
+          refreshToken +
+          '). ' +
+          process.env.NODE_ENV
+      );
+    logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
+    await Withings.refreshUserToken(userId, refreshToken);
+    await withingsRequest(
+      request,
+      userId,
+      accessToken,
+      refreshToken,
+      ++attempt
+    );
+  }
+  return body;
+}
+
 async function syncHeart(userId, accessToken, refreshToken) {
   const { heartListURL, heartGetURL } = config.withings;
 
   const queries = {};
 
-  const res = await request
-    .get(heartListURL)
-    .auth(accessToken, { type: 'bearer' })
-    .query(queries);
-
-  const { status, body } = JSON.parse(res.text);
-
-  if (status === 401) {
-    logger.error('status 401 (syncHeart)');
-    await Withings.refreshUserToken(userId, refreshToken);
-    return await sync();
-  }
+  const body = await withingsRequest(
+    request.get(heartListURL).query(queries),
+    userId,
+    accessToken,
+    refreshToken
+  );
 
   // logger.info(body);
 
@@ -150,19 +185,12 @@ async function syncMeasure(
       // queries.lastupdate = 1570458535;
     }
 
-    const res = await request
-      .get(measureUrl)
-      .auth(accessToken, { type: 'bearer' })
-      .query(queries);
-
-    // Parsing is broken for some reason, manually parse instead
-    const { status, body } = JSON.parse(res.text);
-
-    if (status === 401) {
-      logger.error('status 401 (syncMeasure)');
-      await Withings.refreshUserToken(userId, refreshToken);
-      return await sync();
-    }
+    const body = await withingsRequest(
+      request.get(measureUrl).query(queries),
+      userId,
+      accessToken,
+      refreshToken
+    );
 
     // logger.info(body);
     // logger.info(body.measuregrps.length);

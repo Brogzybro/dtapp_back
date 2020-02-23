@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Sample = require('../models/Sample');
 const FitbitClient = require('../lib/FitbitClient');
 const { DateTime } = require('luxon');
+const logger = require('../config').winston.loggers.fitbit;
 
 const fitbitActivities = {
   heart: {
@@ -149,7 +150,7 @@ async function syncSleep(user, client) {
 }
 
 async function sync() {
-  console.log('[JOB FITBIT SYNC] Running...');
+  logger.info('[JOB FITBIT SYNC] Running...');
   const activities = Object.keys(fitbitActivities);
 
   for await (const user of User.find()) {
@@ -167,7 +168,7 @@ async function sync() {
 
     await syncSleep(user, client);
   }
-  console.log('[JOB FITBIT SYNC] Ended');
+  logger.info('[JOB FITBIT SYNC] Ended');
 }
 
 module.exports = sync;
