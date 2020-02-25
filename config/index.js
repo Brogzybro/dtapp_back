@@ -33,9 +33,10 @@ const config = {
     getDeviceURL: 'https://wbsapi.withings.net/v2/user?action=getdevice',
     heartGetURL: 'https://wbsapi.withings.net/v2/heart?action=get',
     heartListURL: 'https://wbsapi.withings.net/v2/heart?action=list',
+    sleepSummaryURL: 'https://wbsapi.withings.net/v2/sleep?action=getsummary',
     clientID: env.WITHINGS_CLIENT_ID,
     clientSecret: env.WITHINGS_CLIENT_SECRET,
-    scope: 'user.info,user.metrics',
+    scope: 'user.info,user.metrics,user.activity',
     redirectURI: env.WITHINGS_REDIRECT_URI
   },
 

@@ -10,6 +10,7 @@ const Sample = new Schema({
   endDate: Date,
   source: String,
   created: Date,
+  modified: Number,
   grpid: Number
 });
 
@@ -23,6 +24,10 @@ Sample.static('findLatest', function(conditions) {
 // For withings, they use created in addition to the date of the actual measure/sample
 Sample.static('findLatestCreated', function(conditions) {
   return this.findOne(conditions).sort({ created: -1 });
+});
+
+Sample.static('findLatestModified', function(conditions) {
+  return this.findOne(conditions).sort({ modified: -1 });
 });
 
 Sample.set('toJSON', {

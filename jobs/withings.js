@@ -17,6 +17,8 @@ async function sync() {
 
     logger.info('yooo');
 
+    samples.push(...(await syncSleep(userId, accessToken, refreshToken)));
+
     samples.push(...(await syncHeart(userId, accessToken, refreshToken)));
 
     for await (const measureEntry of MEASURES) {
@@ -36,6 +38,55 @@ async function sync() {
   logger.info('[JOB] Added ' + samples.length + ' samples.');
   await Sample.insertMany(samples);
   logger.info('[JOB] Ended');
+}
+
+async function syncSleep(userId, accessToken, refreshToken) {
+  const { sleepSummaryURL } = config.withings;
+
+  const latest = await Sample.findLatestModified({
+    user: userId,
+    type: 'sleep',
+    source: 'withings'
+  });
+
+  const params = { lastupdate: 0 };
+
+  if (latest) {
+    // Milliseconds to seconds
+    const latestTime = latest.modified;
+    params.lastupdate = latestTime + 1;
+  }
+
+  const body = await withingsRequest(
+    request.get(sleepSummaryURL).query(params),
+    userId,
+    accessToken,
+    refreshToken
+  );
+
+  const seriesRelevant = body.series.map(serie => {
+    return {
+      startdate: serie.startdate, // Seconds since epoch
+      enddate: serie.enddate, // Seconds since epoch
+      data: serie.data,
+      modified: serie.modified // Creation/modified date used for lastupdate sync
+    };
+  });
+
+  logger.info('series relevant: %o', seriesRelevant);
+
+  return seriesRelevant.map(serie => {
+    return new Sample({
+      user: userId,
+      type: 'sleep',
+      value: (serie.enddate - serie.startdate) * 1000, // Convert from s to ms, consistent with fitbit sleep
+      metadata: serie.data,
+      startDate: new Date(serie.startdate * 1000),
+      endDate: new Date(serie.enddate * 1000),
+      modified: serie.modified,
+      source: 'withings'
+    });
+  });
 }
 
 /**

@@ -14,6 +14,12 @@ const commands = {
       type: 'ecg'
     });
   },
+  withingswipesleep: async () => {
+    await Sample.deleteMany({
+      type: 'sleep',
+      source: 'withings'
+    });
+  },
   test: async () => {
     console.log('test admin command');
   }
