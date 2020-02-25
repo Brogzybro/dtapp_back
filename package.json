@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.5.1",
+    "@types/mongoose": "^5.7.1",
     "agenda": "^2.3.0",
     "apn": "^2.2.0",
     "basic-auth": "^2.0.1",

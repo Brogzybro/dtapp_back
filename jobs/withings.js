@@ -82,10 +82,22 @@ async function withingsRequest(
 async function syncHeart(userId, accessToken, refreshToken) {
   const { heartListURL, heartGetURL } = config.withings;
 
-  const queries = {};
+  const latest = await Sample.findLatestCreated({
+    user: userId,
+    type: 'ecg',
+    source: 'withings'
+  });
+
+  const params = {};
+
+  if (latest) {
+    // Milliseconds to seconds
+    const latestTime = latest.startDate.getTime() / 1000;
+    params.startdate = latestTime + 1;
+  }
 
   const body = await withingsRequest(
-    request.get(heartListURL).query(queries),
+    request.get(heartListURL).query(params),
     userId,
     accessToken,
     refreshToken

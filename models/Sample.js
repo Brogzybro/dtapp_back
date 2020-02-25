@@ -32,4 +32,9 @@ Sample.set('toJSON', {
   }
 });
 
-module.exports = mongoose.model('Sample', Sample);
+/**
+ * @type {mongoose.Model<Sample>}
+ */
+const mod = mongoose.model('Sample', Sample);
+
+module.exports = mod;
