@@ -15,6 +15,8 @@ async function sync() {
     const { data, user: userId } = token;
     const { access_token: accessToken, refresh_token: refreshToken } = data;
 
+    // TODO: make into class so refresh token is updated betwenn calls
+
     logger.info('yooo');
 
     samples.push(...(await syncSleep(userId, accessToken, refreshToken)));
@@ -109,21 +111,20 @@ async function withingsRequest(
     if (attempt > 3)
       throw new Error(
         'Failed withings auth after 3 failed attempts (' +
-          userId +
-          ', ' +
-          accessToken +
-          ', ' +
-          refreshToken +
-          '). ' +
-          process.env.NODE_ENV
+          `userId: ${userId}` +
+          `, accessToken: ${accessToken}` +
+          `, refreshToken: ${refreshToken}` +
+          `, node_env: ${process.env.NODE_ENV})`
       );
+    logger.info('request %o', request.url);
     logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
-    await Withings.refreshUserToken(userId, refreshToken);
+    const newToken = await Withings.refreshUserToken(userId, refreshToken);
+    if (!newToken) throw new Error("Couldn'nt get new token");
     await withingsRequest(
       request,
       userId,
-      accessToken,
-      refreshToken,
+      newToken.access_token,
+      newToken.refresh_token,
       ++attempt
     );
   }

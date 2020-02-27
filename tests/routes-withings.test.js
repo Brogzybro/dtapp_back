@@ -20,7 +20,7 @@ const withingsTestUser = {
   password: 'withingstestpassword'
 };
 
-describe('withings tests', () => {
+describe.skip('withings tests', () => {
   beforeAll(async () => {
     let user = await User.findOne({ username: withingsTestUser.username });
     if (!user) {
