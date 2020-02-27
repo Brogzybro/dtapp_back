@@ -1,3 +1,14 @@
+var request = require('superagent');
+var config = require('./superagent-mock-config');
+const WithingsJob = require('../../jobs/withings');
+
+var superagentMock = require('superagent-mock')(request, config);
+
+describe('withings job tests', () => {
+  it('should ', () => {});
+});
+
+superagentMock.unset();
 // const mongoose = require('mongoose');
 // const WithingsJob = require('./withings');
 
