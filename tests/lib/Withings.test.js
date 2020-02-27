@@ -1,7 +1,7 @@
-const Withings = require('./Withings');
-const User = require('../models/User');
-const configMongo = require('../config').mongo_test;
-require('../db').init(configMongo);
+const Withings = require('../../lib/Withings');
+const User = require('../../models/User');
+const configMongo = require('../../config').mongo_test;
+require('../../db').init(configMongo);
 
 const mockConfig = {
   withings: {

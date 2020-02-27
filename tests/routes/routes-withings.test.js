@@ -1,10 +1,10 @@
 const supertest = require('supertest');
-const User = require('../models/User');
-const configWithings = require('../config/index').withings;
-const tUtils = require('./testutils');
+const User = require('../../models/User');
+const configWithings = require('../../config/index').withings;
+const tUtils = require('../testutils');
 
-const mongoTestConfig = require('../config').mongo_test;
-const app = require('../App')(mongoTestConfig);
+const mongoTestConfig = require('../../config').mongo_test;
+const app = require('../../App')(mongoTestConfig);
 let server;
 
 beforeAll(done => {
