@@ -13,20 +13,10 @@ const routes = require('./routes/routes');
 
 const DB = require('./db');
 
-const logger = require('./config').winston.loggers.withings;
-
-function initWinston() {
-  logger.error('yo error');
-  logger.info('yo error');
-  logger.warn('yo warn');
-}
-
 module.exports = mongoConfig => {
   const app = new Koa();
   const agenda = new Agenda();
   const db = DB.init(mongoConfig);
-
-  initWinston();
 
   app.use(cors());
   app.use(bodyparser({ jsonLimit: 10000000 }));
@@ -54,7 +44,8 @@ module.exports = mongoConfig => {
   });
   agenda.define('withings sync', (job, done) => {
     console.log('Withings sync in progress');
-    require('./jobs/withings')()
+    require('./jobs/withings_job')
+      .sync()
       .then(done)
       .catch(console.error);
   });
