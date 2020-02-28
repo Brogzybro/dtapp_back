@@ -17,7 +17,7 @@ async function sync() {
 
     // TODO: make into class so refresh token is updated betwenn calls
 
-    logger.info('yooo');
+    logger.info('userid %o', token.user);
 
     samples.push(...(await syncSleep(userId, accessToken, refreshToken)));
 
@@ -102,10 +102,17 @@ async function withingsRequest(
   refreshToken,
   attempt = 1
 ) {
+  // TODO fix this shit
+  // This doesn't run after the second time, just returns the same data
   const res = await request.auth(accessToken, { type: 'bearer' });
+  console.info('res accessToken', accessToken);
+  console.info('res', res);
 
   // Parsing is broken for some reason, manually parse instead
+  console.info('parsing json');
+  if (!res || !res.text) throw new Error('res.text not set, unexpected');
   const { status, body } = JSON.parse(res.text);
+  console.info('paresed json');
 
   if (status === 401) {
     if (attempt > 3)
@@ -120,13 +127,15 @@ async function withingsRequest(
     logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
     const newToken = await Withings.refreshUserToken(userId, refreshToken);
     if (!newToken) throw new Error("Couldn'nt get new token");
-    await withingsRequest(
+    console.log('accesstoken', newToken.access_token);
+    const newBody = await withingsRequest(
       request,
       userId,
       newToken.access_token,
       newToken.refresh_token,
       ++attempt
     );
+    return newBody;
   }
   return body;
 }
@@ -283,9 +292,9 @@ async function syncMeasure(
     });
     return samples;
   } catch (error) {
-    logger.info('withings job sync err:' + error);
+    logger.info('withings measure sync err:' + error);
     return [];
   }
 }
 
-module.exports = sync;
+module.exports = { sync, syncHeart, syncMeasure, syncSleep };

@@ -5,7 +5,7 @@ const withingsJob = require('../jobs/withings_job');
 
 const commands = {
   fitbitsync: () => fitbitJob(),
-  withingssync: () => withingsJob(),
+  withingssync: () => withingsJob.sync(),
   withingswipebp: async () => {
     await Sample.deleteMany({
       type: { $in: ['systolicBloodPressure', 'diastolicBloodPressure'] }
