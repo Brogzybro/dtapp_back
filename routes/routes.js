@@ -2,14 +2,14 @@ const Router = require('koa-router');
 
 const errors = require('./middleware/errors');
 const auth = require('./middleware/auth');
-const adminauth = require('./middleware/adminauth');
+const adminauth = require('./middleware/admin_auth');
 
-const healthkit = require('../controllers/healthkit');
-const fitbit = require('../controllers/fitbit');
-const withings = require('../controllers/withings');
-const user = require('../controllers/user');
-const samples = require('../controllers/samples');
-const Sample = require('../models/Sample');
+const healthkit = require('../controllers/healthkit_controller');
+const fitbit = require('../controllers/fitbit_controller');
+const withings = require('../controllers/withings_controller');
+const user = require('../controllers/user_controller');
+const samples = require('../controllers/samples_controller');
+const adminController = require('../controllers/admin_controller');
 
 const router = new Router();
 
@@ -297,7 +297,7 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  */
 router.get('/samples', auth, samples.list);
 
-router.get('/admin', adminauth, require('../controllers/admin').adminCommand);
+router.get('/admin', adminauth, adminController.adminCommand);
 
 router.use(errors);
 

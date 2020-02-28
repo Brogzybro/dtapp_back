@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Token = require('../../models/WithingsToken');
-const User = require('../../models/User');
+const Token = require('../../models/withings_token');
+const User = require('../../models/user');
 const auth = require('../../routes/middleware/auth');
 
 const mongoTestConfig = require('../../config').mongo_test;

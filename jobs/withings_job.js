@@ -1,8 +1,8 @@
 const request = require('superagent');
 const config = require('../config');
-const Token = require('../models/WithingsToken');
-const Sample = require('../models/Sample');
-const Withings = require('../lib/Withings');
+const Token = require('../models/withings_token');
+const Sample = require('../models/sample');
+const Withings = require('../lib/withings');
 const logger = config.winston.loggers.withings;
 
 async function sync() {

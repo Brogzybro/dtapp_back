@@ -1,9 +1,11 @@
 /* eslint-disable no-multi-str */
-const Sample = require('../models/Sample');
+const Sample = require('../models/sample');
+const fitbitJob = require('../jobs/fitbit_job');
+const withingsJob = require('../jobs/withings_job');
 
 const commands = {
-  fitbitsync: () => require('../jobs/fitbit')(),
-  withingssync: () => require('../jobs/withings')(),
+  fitbitsync: () => fitbitJob(),
+  withingssync: () => withingsJob(),
   withingswipebp: async () => {
     await Sample.deleteMany({
       type: { $in: ['systolicBloodPressure', 'diastolicBloodPressure'] }

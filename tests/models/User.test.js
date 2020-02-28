@@ -3,7 +3,7 @@ test.todo('some test to be written in the future');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
-const User = require('../../models/User');
+const User = require('../../models/user');
 
 beforeAll(async () => {
   const uri = await mongod.getConnectionString();
@@ -52,7 +52,7 @@ it('should add user', async () => {
   expect(retUser).toEqual(user);
 });
 
-// const User = require('../models/User');
+// const User = require('../models/user');
 // const ConfigMongo = require('../config').mongo_test;
 // const DB = require('../db');
 // const mongoose = require('mongoose');

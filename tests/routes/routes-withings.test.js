@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const User = require('../../models/User');
+const User = require('../../models/user');
 const configWithings = require('../../config/index').withings;
 const tUtils = require('../testutils');
 

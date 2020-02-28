@@ -1,5 +1,5 @@
 const auth = require('basic-auth');
-const User = require('../../models/User');
+const User = require('../../models/user');
 
 const authenticate = async (ctx, next) => {
   const { name, pass } = auth(ctx.req) || {};

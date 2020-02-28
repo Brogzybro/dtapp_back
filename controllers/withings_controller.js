@@ -1,6 +1,7 @@
 const config = require('../config').withings;
-const Withings = require('../lib/Withings');
-const User = require('../models/User');
+const Withings = require('../lib/withings');
+const User = require('../models/user');
+// eslint-disable-next-line no-unused-vars
 const koa = require('koa');
 
 exports.checkTokenValidity = async ctx => {

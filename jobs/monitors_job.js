@@ -1,8 +1,8 @@
 const { DateTime } = require('luxon');
 const notification = require('../lib/notification');
 
-const User = require('../models/User');
-const Sample = require('../models/Sample');
+const User = require('../models/user');
+const Sample = require('../models/sample');
 
 async function heartRate() {
   for await (const user of User.find()) {

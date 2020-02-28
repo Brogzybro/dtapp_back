@@ -1,5 +1,5 @@
-const Withings = require('../../lib/Withings');
-const User = require('../../models/User');
+const Withings = require('../../lib/withings');
+const User = require('../../models/user');
 const configMongo = require('../../config').mongo_test;
 require('../../db').init(configMongo);
 

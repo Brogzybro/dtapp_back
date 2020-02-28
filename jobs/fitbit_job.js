@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const Sample = require('../models/Sample');
-const FitbitClient = require('../lib/FitbitClient');
+const User = require('../models/user');
+const Sample = require('../models/sample');
+const FitbitClient = require('../lib/fitbit_client');
 const { DateTime } = require('luxon');
 const logger = require('../config').winston.loggers.fitbit;
 

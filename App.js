@@ -4,6 +4,7 @@ const send = require('koa-send');
 const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
 const cors = require('koa2-cors');
+const fitbitSync = require('./jobs/fitbit_job');
 
 // Limit array length prints to 10
 require('util').inspect.defaultOptions.maxArrayLength = 10;
@@ -44,8 +45,6 @@ module.exports = mongoConfig => {
   });
 
   agenda.mongo(db);
-
-  const fitbitSync = require('./jobs/fitbit');
 
   agenda.define('fitbit sync', (job, done) => {
     console.log('Fitbit sync in progress');

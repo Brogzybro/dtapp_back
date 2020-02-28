@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const User = require('../../models/User');
+const User = require('../../models/user');
 const tUtils = require('../testutils');
 
 const testUser = {
