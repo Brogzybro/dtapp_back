@@ -42,6 +42,52 @@ async function sync() {
   logger.info('[JOB] Ended');
 }
 
+/**
+ *
+ * @param {function(): request.SuperAgentRequest} requestFunc Function that returns superagent request
+ *  // Done because if you create and use the same request object it will only be called once.
+ */
+async function withingsRequest(
+  requestFunc,
+  userId,
+  accessToken,
+  refreshToken,
+  attempt = 1
+) {
+  // TODO fix this shit
+  // This doesn't run after the second time, just returns the same data
+  const request = requestFunc();
+  const res = await request.auth(accessToken, { type: 'bearer' });
+
+  // Parsing is broken for some reason, manually parse instead
+  if (!res || !res.text) throw new Error('res.text not set, unexpected');
+  const { status, body } = JSON.parse(res.text);
+
+  if (status === 401) {
+    if (attempt > 3)
+      throw new Error(
+        'Failed withings auth after 3 failed attempts (' +
+          `userId: ${userId}` +
+          `, accessToken: ${accessToken}` +
+          `, refreshToken: ${refreshToken}` +
+          `, node_env: ${process.env.NODE_ENV})`
+      );
+    logger.info('request %o', request.url);
+    logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
+    const newToken = await Withings.refreshUserToken(userId, refreshToken);
+    if (!newToken) throw new Error("Couldn'nt get new token");
+    const newBody = await withingsRequest(
+      requestFunc,
+      userId,
+      newToken.access_token,
+      newToken.refresh_token,
+      ++attempt
+    );
+    return newBody;
+  }
+  return body;
+}
+
 async function syncSleep(userId, accessToken, refreshToken) {
   const { sleepSummaryURL } = config.withings;
 
@@ -60,7 +106,7 @@ async function syncSleep(userId, accessToken, refreshToken) {
   }
 
   const body = await withingsRequest(
-    request.get(sleepSummaryURL).query(params),
+    () => request.get(sleepSummaryURL).query(params),
     userId,
     accessToken,
     refreshToken
@@ -91,55 +137,6 @@ async function syncSleep(userId, accessToken, refreshToken) {
   });
 }
 
-/**
- *
- * @param {request.SuperAgentRequest} request The put together request
- */
-async function withingsRequest(
-  request,
-  userId,
-  accessToken,
-  refreshToken,
-  attempt = 1
-) {
-  // TODO fix this shit
-  // This doesn't run after the second time, just returns the same data
-  const res = await request.auth(accessToken, { type: 'bearer' });
-  console.info('res accessToken', accessToken);
-  console.info('res', res);
-
-  // Parsing is broken for some reason, manually parse instead
-  console.info('parsing json');
-  if (!res || !res.text) throw new Error('res.text not set, unexpected');
-  const { status, body } = JSON.parse(res.text);
-  console.info('paresed json');
-
-  if (status === 401) {
-    if (attempt > 3)
-      throw new Error(
-        'Failed withings auth after 3 failed attempts (' +
-          `userId: ${userId}` +
-          `, accessToken: ${accessToken}` +
-          `, refreshToken: ${refreshToken}` +
-          `, node_env: ${process.env.NODE_ENV})`
-      );
-    logger.info('request %o', request.url);
-    logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
-    const newToken = await Withings.refreshUserToken(userId, refreshToken);
-    if (!newToken) throw new Error("Couldn'nt get new token");
-    console.log('accesstoken', newToken.access_token);
-    const newBody = await withingsRequest(
-      request,
-      userId,
-      newToken.access_token,
-      newToken.refresh_token,
-      ++attempt
-    );
-    return newBody;
-  }
-  return body;
-}
-
 async function syncHeart(userId, accessToken, refreshToken) {
   const { heartListURL, heartGetURL } = config.withings;
 
@@ -158,13 +155,16 @@ async function syncHeart(userId, accessToken, refreshToken) {
   }
 
   const body = await withingsRequest(
-    request.get(heartListURL).query(params),
+    () => request.get(heartListURL).query(params),
     userId,
     accessToken,
     refreshToken
   );
 
-  // logger.info(body);
+  if (!body.series) {
+    logger.warn('body had no series');
+    return [];
+  }
 
   const ecgRefs = body.series.map(val => {
     return {
@@ -259,7 +259,7 @@ async function syncMeasure(
     }
 
     const body = await withingsRequest(
-      request.get(measureUrl).query(queries),
+      () => request.get(measureUrl).query(queries),
       userId,
       accessToken,
       refreshToken

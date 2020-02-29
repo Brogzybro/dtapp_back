@@ -1,35 +1,32 @@
+process.env.DISABLE_ALL_LOGGERS = 'true';
 const mongoose = require('mongoose');
 const request = require('superagent');
-const config = require('./../superagent-mock-config');
+const superagentMockConfig = require('./../superagent-mock-config');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
 const withingsJob = require('../../jobs/withings_job');
 const withingsConfig = require('../../config').withings;
 const Sample = require('../../models/sample');
+const Token = require('../../models/withings_token');
 
-const superagentMock = require('superagent-mock')(request, config);
+const { mockTokenWrongAccessToken } = require('../superagent-mock-data');
+
+let superagentMock;
 
 const measureEntry = {
   type: 'systolicBloodPressure',
   value: 10
 };
 
-const mockTokenData = {
-  access_token: '03db50ed52e42602ee500acc624411f17c4b0224',
-  expires_in: 10800,
-  token_type: 'Bearer',
-  scope: 'user.info,user.metrics,user.activity',
-  refresh_token: '84151dcd36100bb76605675d5416a1abbf2e17d2',
-  userid: 19662645
-};
-
-const mockToken = {
-  user: '5e564c0b2a2a4400171f2eee',
-  data: mockTokenData
-};
-
 describe('withings job tests', () => {
   beforeAll(async () => {
+    process.env.DISABLE_ALL_LOGGERS = 'true';
+
+    superagentMock = require('superagent-mock')(
+      request,
+      superagentMockConfig.config
+    );
+
     const uri = await mongod.getConnectionString();
 
     const mongooseOpts = {
@@ -42,17 +39,32 @@ describe('withings job tests', () => {
   afterAll(() => {
     superagentMock.unset();
   });
-  it('should something syncmeasure', async () => {
+  it.skip('should get a list of measures with invalid access token (uses valid refresh token)', async () => {
     const res = await withingsJob.syncMeasure(
-      mockToken.user,
+      mockTokenWrongAccessToken.user,
       measureEntry,
-      mockToken.data.access_token,
-      mockToken.data.refresh_token,
+      mockTokenWrongAccessToken.data.access_token,
+      mockTokenWrongAccessToken.data.refresh_token,
       withingsConfig.measureUrl
     );
     // const allSamples = await Sample.find();
     expect(Array.isArray(res)).toBe(true);
+    expect(res.length > 0);
     console.info(res);
+  });
+
+  it.skip('should call sleep summary', async () => {
+    await withingsJob.syncSleep(
+      mockTokenWrongAccessToken.user,
+      mockTokenWrongAccessToken.data.access_token,
+      mockTokenWrongAccessToken.data.refresh_token
+    );
+  });
+  it('should sync all (48) withings', async () => {
+    await Token.create(mockTokenWrongAccessToken);
+    await withingsJob.sync();
+    const samples = await Sample.find();
+    expect(samples.length).toBe(48);
   });
 
   it.skip('should something', async () => {

@@ -23,7 +23,8 @@ function createLogger(fileName, format) {
     transports: [
       new winston.transports.Console({
         format: format,
-        level: 'info'
+        level: 'info',
+        silent: process.env.DISABLE_ALL_LOGGERS === 'true'
       }),
       new winston.transports.File({
         filename: fileName,
