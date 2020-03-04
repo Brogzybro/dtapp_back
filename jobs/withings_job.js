@@ -140,7 +140,7 @@ async function syncSleep(userId, accessToken, refreshToken) {
 async function syncHeart(userId, accessToken, refreshToken) {
   const { heartListURL, heartGetURL } = config.withings;
 
-  const latest = await Sample.findLatestCreated({
+  const latest = await Sample.findLatest({
     user: userId,
     type: 'ecg',
     source: 'withings'
@@ -153,6 +153,8 @@ async function syncHeart(userId, accessToken, refreshToken) {
     const latestTime = latest.startDate.getTime() / 1000;
     params.startdate = latestTime + 1;
   }
+
+  logger.info('latestTimee ' + params.startdate);
 
   const body = await withingsRequest(
     () => request.get(heartListURL).query(params),
@@ -245,6 +247,7 @@ async function syncMeasure(
     // we add 5 seconds, we might lose a measure because of this, but fuck it
     latestTime = latest.created.getTime() / 1000 + 5; // + 5;
     // logger.info('latest time: ' + latestTime);
+    logger.info(latestTime);
   }
 
   try {
