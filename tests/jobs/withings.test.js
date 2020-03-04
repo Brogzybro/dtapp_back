@@ -39,7 +39,6 @@ describe('withings job tests', () => {
   });
 
   it('should call sleep summary', async done => {
-    testlib.enableWinstonLogs();
     const token = WithingsToken(mockTokenWrongAccessToken);
     const spyRefresh = jest.spyOn(token, 'refresh');
     await withingsJob.syncSleep(token);
