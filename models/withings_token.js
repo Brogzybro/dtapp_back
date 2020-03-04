@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
+const request = require('superagent');
+const Config = require('../config').withings;
+const logger = require('../config').winston.loggers.withings;
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-const Token = new Schema({
+const WithingsToken = new Schema({
   user: {
     type: ObjectId,
     ref: 'User',
@@ -23,6 +26,44 @@ const Token = new Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+WithingsToken.methods.refresh = async function() {
+  const { clientID, clientSecret, tokenURL } = Config;
+  const queries = {
+    grant_type: 'refresh_token',
+    client_id: clientID,
+    client_secret: clientSecret,
+    refresh_token: this.data.refresh_token
+  };
+
+  try {
+    const res = await request
+      .post(tokenURL)
+      .type('form')
+      .send(queries);
+    if (!res.text) throw new Error('res.text missing in refreshUserToken');
+    /*
+    logger.info(
+      'Refresh user token - status: %d, text: %s',
+      res.status,
+      res.text
+    );
+    */
+    if (res.status === 200) {
+      const data = res.body;
+      logger.info(
+        'New access token for user (%o): \nOld: %o\nNew: %o',
+        this.user,
+        this.data,
+        data
+      );
+      this.data = data;
+      await this.save();
+    }
+  } catch (error) {
+    console.log('withings refresh token err: ' + error);
+  }
+};
+
 /*
 "expires_in":10800,
 "token_type":"Bearer",
@@ -30,4 +71,4 @@ const Token = new Schema({
 "refresh_token":"9362feb94331a4e014ed4309dd9e74c48f2aa36c",
 "userid":"19662645"
 */
-module.exports = mongoose.model('WithingsTokens', Token);
+module.exports = mongoose.model('WithingsToken', WithingsToken);

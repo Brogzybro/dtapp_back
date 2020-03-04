@@ -1,38 +1,26 @@
 const request = require('superagent');
 const config = require('../config');
-const Token = require('../models/withings_token');
+const WithingsToken = require('../models/withings_token');
 const Sample = require('../models/sample');
-const Withings = require('../lib/withings');
 const logger = config.winston.loggers.withings;
+// eslint-disable-next-line no-unused-vars
+const mongoose = require('mongoose');
 
 async function sync() {
   logger.info('[JOB] Running...');
   logger.error('bro');
-  const { measureUrl } = config.withings;
-  const tokens = await Token.find({});
   const samples = [];
-  for await (const token of tokens) {
-    const { data, user: userId } = token;
-    const { access_token: accessToken, refresh_token: refreshToken } = data;
-
+  for await (const token of WithingsToken.find()) {
     // TODO: make into class so refresh token is updated betwenn calls
 
     logger.info('userid %o', token.user);
 
-    samples.push(...(await syncSleep(userId, accessToken, refreshToken)));
+    samples.push(...(await syncSleep(token)));
 
-    samples.push(...(await syncHeart(userId, accessToken, refreshToken)));
+    samples.push(...(await syncHeart(token)));
 
     for await (const measureEntry of MEASURES) {
-      samples.push(
-        ...(await syncMeasure(
-          userId,
-          measureEntry,
-          accessToken,
-          refreshToken,
-          measureUrl
-        ))
-      );
+      samples.push(...(await syncMeasure(token, measureEntry)));
     }
   }
 
@@ -47,13 +35,9 @@ async function sync() {
  * @param {function(): request.SuperAgentRequest} requestFunc Function that returns superagent request
  *  // Done because if you create and use the same request object it will only be called once.
  */
-async function withingsRequest(
-  requestFunc,
-  userId,
-  accessToken,
-  refreshToken,
-  attempt = 1
-) {
+async function withingsRequest(requestFunc, token, attempt = 1) {
+  const { data, user: userId } = token;
+  const { access_token: accessToken, refresh_token: refreshToken } = data;
   // TODO fix this shit
   // This doesn't run after the second time, just returns the same data
   const request = requestFunc();
@@ -73,23 +57,22 @@ async function withingsRequest(
           `, node_env: ${process.env.NODE_ENV})`
       );
     logger.info('request %o', request.url);
-    logger.error('status 401 ' + userId + accessToken + refreshToken + Date());
-    const newToken = await Withings.refreshUserToken(userId, refreshToken);
-    if (!newToken) throw new Error("Couldn'nt get new token");
-    const newBody = await withingsRequest(
-      requestFunc,
-      userId,
-      newToken.access_token,
-      newToken.refresh_token,
-      ++attempt
-    );
+    logger.error('status 401 %o, %o, %o', userId, accessToken, refreshToken);
+    await token.refresh();
+
+    const newBody = await withingsRequest(requestFunc, token, ++attempt);
     return newBody;
   }
   return body;
 }
 
-async function syncSleep(userId, accessToken, refreshToken) {
+/**
+ *
+ * @param {mongoose.Document} token Withings token
+ */
+async function syncSleep(token) {
   const { sleepSummaryURL } = config.withings;
+  const { user: userId } = token;
 
   const latest = await Sample.findLatestModified({
     user: userId,
@@ -107,9 +90,7 @@ async function syncSleep(userId, accessToken, refreshToken) {
 
   const body = await withingsRequest(
     () => request.get(sleepSummaryURL).query(params),
-    userId,
-    accessToken,
-    refreshToken
+    token
   );
 
   const seriesRelevant = body.series.map(serie => {
@@ -121,7 +102,7 @@ async function syncSleep(userId, accessToken, refreshToken) {
     };
   });
 
-  logger.info('series relevant: %o', seriesRelevant);
+  logger.verbose('series relevant: %o', seriesRelevant);
 
   return seriesRelevant.map(serie => {
     return new Sample({
@@ -137,8 +118,13 @@ async function syncSleep(userId, accessToken, refreshToken) {
   });
 }
 
-async function syncHeart(userId, accessToken, refreshToken) {
+/**
+ *
+ * @param {mongoose.Document} token Withings token
+ */
+async function syncHeart(token) {
   const { heartListURL, heartGetURL } = config.withings;
+  const { user: userId } = token;
 
   const latest = await Sample.findLatest({
     user: userId,
@@ -158,9 +144,7 @@ async function syncHeart(userId, accessToken, refreshToken) {
 
   const body = await withingsRequest(
     () => request.get(heartListURL).query(params),
-    userId,
-    accessToken,
-    refreshToken
+    token
   );
 
   if (!body.series) {
@@ -180,19 +164,17 @@ async function syncHeart(userId, accessToken, refreshToken) {
   const ecgs = [];
   for await (const ecgRef of ecgRefs) {
     try {
-      const ress = await request
-        .get(heartGetURL)
-        .auth(accessToken, { type: 'bearer' })
-        .query({ signalid: ecgRef.signalid });
-      const { status: statuss, body: bodyy } = JSON.parse(ress.text);
-      logger.verbose('statuss: %o', statuss);
-      logger.verbose('bodyy: %o', bodyy);
+      const body = await withingsRequest(
+        () => request.get(heartGetURL).query({ signalid: ecgRef.signalid }),
+        token
+      );
+      logger.verbose('body: %o', body);
       ecgs.push({
         timestamp: ecgRef.timestamp,
         signalid: ecgRef.signalid,
-        signal: bodyy.signal,
-        sampling_frequency: bodyy.sampling_frequency,
-        wearposition: bodyy.wearposition
+        signal: body.signal,
+        sampling_frequency: body.sampling_frequency,
+        wearposition: body.wearposition
       });
     } catch (error) {
       logger.info(error);
@@ -227,13 +209,14 @@ const MEASURES = [
   }
 ];
 
-async function syncMeasure(
-  userId,
-  measureEntry,
-  accessToken,
-  refreshToken,
-  measureUrl
-) {
+/**
+ *
+ * @param {mongoose.Document} token Withings token
+ * @param {Object} measureEntry Object describing measure
+ */
+async function syncMeasure(token, measureEntry) {
+  const { measureUrl } = config.withings;
+  const { user: userId } = token;
   const samples = [];
   const latest = await Sample.findLatest({
     user: userId,
@@ -263,9 +246,7 @@ async function syncMeasure(
 
     const body = await withingsRequest(
       () => request.get(measureUrl).query(queries),
-      userId,
-      accessToken,
-      refreshToken
+      token
     );
 
     // logger.info(body);

@@ -3,7 +3,7 @@ const request = require('superagent');
 const withingsJob = require('../../jobs/withings_job');
 const withingsConfig = require('../../config').withings;
 const Sample = require('../../models/sample');
-const Token = require('../../models/withings_token');
+const WithingsToken = require('../../models/withings_token');
 const testlib = require('../_helpers/jobstestlib');
 const withingsLogger = require('../../config').winston.loggers.withings;
 
@@ -27,11 +27,8 @@ describe('withings job tests', () => {
   });
   it('should get a list of measures with invalid access token (uses valid refresh token)', async done => {
     const res = await withingsJob.syncMeasure(
-      mockTokenWrongAccessToken.user,
-      measureEntry,
-      mockTokenWrongAccessToken.data.access_token,
-      mockTokenWrongAccessToken.data.refresh_token,
-      withingsConfig.measureUrl
+      mockTokenWrongAccessToken,
+      measureEntry
     );
     // const allSamples = await Sample.find();
     expect(Array.isArray(res)).toBe(true);
@@ -42,22 +39,22 @@ describe('withings job tests', () => {
   });
 
   it('should call sleep summary', async done => {
-    await withingsJob.syncSleep(
-      mockTokenWrongAccessToken.user,
-      mockTokenWrongAccessToken.data.access_token,
-      mockTokenWrongAccessToken.data.refresh_token
-    );
+    testlib.enableWinstonLogs();
+    const token = WithingsToken(mockTokenWrongAccessToken);
+    const spyRefresh = jest.spyOn(token, 'refresh');
+    await withingsJob.syncSleep(token);
+    expect(spyRefresh).toHaveBeenCalledTimes(1);
     done();
   });
   it('should sync all (48) withings', async done => {
-    await Token.create(mockTokenWrongAccessToken);
+    await WithingsToken.create(mockTokenWrongAccessToken);
     await withingsJob.sync(); //
     const samples = await Sample.find();
     expect(samples.length).toBe(48);
     done();
   });
 
-  it('should something', async done => {
+  it.skip('should something', async done => {
     let res = null;
     try {
       const queries = {

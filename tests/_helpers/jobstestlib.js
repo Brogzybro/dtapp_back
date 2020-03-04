@@ -24,12 +24,11 @@ exports.after = async () => {
 exports.setupDb = async () => {
   const uri = await mongod.getConnectionString(true);
 
-  const mongooseOpts = {
+  await mongoose.connect(uri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
-  };
-
-  await mongoose.connect(uri, mongooseOpts);
+    useUnifiedTopology: true,
+    useCreateIndex: true
+  });
 };
 
 exports.disableDb = async () => {
