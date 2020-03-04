@@ -1,4 +1,6 @@
 require('dotenv').config();
+// eslint-disable-next-line no-unused-vars
+const winston = require('winston');
 const loggerUtil = require('../util/loggerUtil');
 
 const { env } = process;
@@ -49,9 +51,39 @@ const config = {
 
   winston: {
     loggers: {
-      withings: loggerUtil.basicLogger('withings.log', 'Withings'),
-      fitbit: loggerUtil.basicLogger('fitbit.log', 'Fitbit'),
-      default: loggerUtil.basicLogger('general.log', 'General')
+      /**
+       * @type winston.Logger
+       */
+      withings: (() => {
+        if (global.withingsLogger) {
+          return global.withingsLogger;
+        }
+        global.withingsLogger = loggerUtil.basicLogger(
+          'withings.log',
+          'Withings'
+        );
+        return global.withingsLogger;
+      })(),
+      /**
+       * @type winston.Logger
+       */
+      fitbit: (() => {
+        if (global.fitbitLogger) {
+          return global.fitbitLogger;
+        }
+        global.fitbitLogger = loggerUtil.basicLogger('fitbit.log', 'Fitbit');
+        return global.fitbitLogger;
+      })(),
+      /**
+       * @type winston.Logger
+       */
+      default: (() => {
+        if (global.generalLogger) {
+          return global.generalLogger;
+        }
+        global.generalLogger = loggerUtil.basicLogger('general.log', 'General');
+        return global.generalLogger;
+      })()
     }
   }
 };

@@ -5,6 +5,7 @@ const withingsConfig = require('../../config').withings;
 const Sample = require('../../models/sample');
 const Token = require('../../models/withings_token');
 const testlib = require('../_helpers/jobstestlib');
+const withingsLogger = require('../../config').winston.loggers.withings;
 
 const { mockTokenWrongAccessToken } = require('../superagent-mock-data');
 
@@ -15,17 +16,16 @@ const measureEntry = {
 
 describe('withings job tests', () => {
   beforeEach(async done => {
-    await testlib.setupAll();
-    // testlib.disableLog('log');
-    // testlib.disableLog('info');
+    await testlib.setup();
+    testlib.disableLog('log');
+    testlib.disableLog('info');
     done();
   });
   afterEach(async done => {
-    await testlib.afterAll();
+    await testlib.after();
     done();
   });
   it('should get a list of measures with invalid access token (uses valid refresh token)', async done => {
-    testlib.enableWinstonLogs();
     const res = await withingsJob.syncMeasure(
       mockTokenWrongAccessToken.user,
       measureEntry,
@@ -37,6 +37,7 @@ describe('withings job tests', () => {
     expect(Array.isArray(res)).toBe(true);
     expect(res.length > 0);
     console.info(res);
+    withingsLogger.info('test');
     done();
   });
 

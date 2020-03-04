@@ -3,10 +3,10 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
 const request = require('superagent');
 const superagentMockConfig = require('./../superagent-mock-config');
-
 let superagentMock;
+const withingsLogger = require('../../config').winston.loggers.withings;
 
-exports.setupAll = async (
+exports.setup = async (
   disableWinston = true,
   setupMock = true,
   disableDb = true
@@ -16,7 +16,7 @@ exports.setupAll = async (
   if (disableDb) await this.setupDb();
 };
 
-exports.afterAll = async () => {
+exports.after = async () => {
   this.disableMock();
   await this.disableDb();
 };
@@ -44,7 +44,7 @@ exports.setupMock = () => {
 };
 
 exports.setupDisableLogsWinston = () => {
-  process.env.DISABLE_ALL_LOGGERS = 'true';
+  withingsLogger.silent = true;
 };
 
 exports.disableMock = () => {
@@ -56,7 +56,13 @@ exports.disableLog = level => {
 };
 
 exports.enableWinstonLogs = () => {
-  process.env.DISABLE_ALL_LOGGERS = 'false';
+  withingsLogger.silent = false;
+};
+
+exports.logLevel = level => {
+  withingsLogger.transports.forEach(transport => {
+    transport.level = level;
+  });
 };
 
 exports.enableStandardLogs = () => {
