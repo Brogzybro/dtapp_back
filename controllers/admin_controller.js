@@ -1,5 +1,5 @@
 /* eslint-disable no-multi-str */
-const Sample = require('../models/sample');
+const Sample = require('../models/sample_model');
 const fitbitJob = require('../jobs/fitbit_job');
 const withingsJob = require('../jobs/withings_job');
 

@@ -1,6 +1,6 @@
 const config = require('../config').withings;
-const Withings = require('../lib/withings');
-const User = require('../models/user');
+const Withings = require('../lib/withings_lib');
+const User = require('../models/user_model');
 // eslint-disable-next-line no-unused-vars
 const koa = require('koa');
 

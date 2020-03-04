@@ -1,4 +1,4 @@
-const Sample = require('../models/sample');
+const Sample = require('../models/sample_model');
 
 exports.list = async ctx => {
   const { user } = ctx.state;

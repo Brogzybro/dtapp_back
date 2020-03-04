@@ -1,4 +1,4 @@
-const Sample = require('../models/sample');
+const Sample = require('../models/sample_model');
 
 // Save data from healthkit
 exports.sync = async ctx => {

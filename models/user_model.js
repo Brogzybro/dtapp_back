@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
-const Token = require('./token');
+const Token = require('./token_model');
 
 const User = new Schema({
   username: {

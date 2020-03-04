@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-const Token = require('../../models/withings_token');
-const User = require('../../models/user');
+const Token = require('../../models/withings_token_model');
+const User = require('../../models/user_model');
 const auth = require('../../routes/middleware/auth');
 
 const mongoTestConfig = require('../../config').mongo_test;
 const appPromise = require('../../App');
+// eslint-disable-next-line no-unused-vars
 const http = require('http');
 
 /**

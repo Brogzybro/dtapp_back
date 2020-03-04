@@ -1,5 +1,5 @@
-const User = require('../models/user');
-const FitbitClient = require('../lib/fitbit_client');
+const User = require('../models/user_model');
+const FitbitClient = require('../lib/fitbit_client_lib');
 
 exports.auth = async ctx => {
   const { token } = ctx.query;

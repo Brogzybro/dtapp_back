@@ -1,9 +1,8 @@
 // process.env.DISABLE_ALL_LOGGERS = 'true';
 const request = require('superagent');
 const withingsJob = require('../../jobs/withings_job');
-const withingsConfig = require('../../config').withings;
-const Sample = require('../../models/sample');
-const WithingsToken = require('../../models/withings_token');
+const Sample = require('../../models/sample_model');
+const WithingsToken = require('../../models/withings_token_model');
 const testlib = require('../_helpers/jobstestlib');
 const withingsLogger = require('../../config').winston.loggers.withings;
 
@@ -46,7 +45,6 @@ describe('withings job tests', () => {
     done();
   });
   it('should sync all (48) withings', async done => {
-    testlib.enableWinstonLogs();
     await WithingsToken.create(mockTokenWrongAccessToken);
     await withingsJob.sync(); //
     const samples = await Sample.find();
