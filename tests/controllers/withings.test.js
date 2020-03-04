@@ -4,15 +4,21 @@ const User = require('../../models/user');
 const auth = require('../../routes/middleware/auth');
 
 const mongoTestConfig = require('../../config').mongo_test;
-const app = require('../../App')(mongoTestConfig);
+const appPromise = require('../../App');
+const http = require('http');
+
+/**
+ * @type http.Server
+ */
 let server;
 
-beforeAll(done => {
-  server = app.listen(done);
+beforeAll(async done => {
+  const app = await appPromise(mongoTestConfig);
+  server = await app.listen(done, true);
   // console.log('withings test js listening on ' + server.address().port);
 });
 
-afterAll(done => {
+afterAll(async done => {
   server.close(done);
 });
 
@@ -58,7 +64,7 @@ const mockWithingsCallbackCTX = {
 };
 */
 // test
-beforeAll(async () => {
+beforeAll(async done => {
   await mongoose.connect(mongoTestConfig.uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -68,14 +74,17 @@ beforeAll(async () => {
   if (token) {
     await token.remove();
   }
+  done();
 });
 
-test('should log in', async () => {
+test('should log in', async done => {
   await auth(mockAuthCtx, () => {});
   // console.log(mockAuthCtx);
   expect(true).toBeTruthy();
+  done();
 });
 
-test('should remove the user', async () => {
+test('should remove the user', async done => {
   await User.deleteOne({ username: mockUser.username });
+  done();
 });

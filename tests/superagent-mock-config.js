@@ -94,13 +94,18 @@ module.exports.config = [
      */
     fixtures: function(match, params, headers, context) {
       console.info('request measureUrl');
-      const url = new URL(match);
-      const queryParams = url.searchParams;
-      console.info(queryParams.get('action'));
-      console.info(match);
-      console.info(params);
+      const urlS = new URLSearchParams(match[1]);
+      console.info(urlS);
       console.info('authorization:', headers['Authorization']);
 
+      switch (urlS.get('meastype')) {
+        case '10':
+          console.log('got 10');
+          break;
+        default:
+          console.log('something else ' + urlS.get('meastype'));
+          break;
+      }
       if (headers['Authorization'] === 'Bearer ' + validAccessToken)
         return measureResponses.successType9;
       else return measureResponses.invalidAccessToken;

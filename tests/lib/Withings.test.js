@@ -35,12 +35,13 @@ describe('Withings functions', () => {
     );
   });
 
-  it('newtoken without active user (no _userid) should fail', async () => {
+  it('newtoken without active user (no _userid) should fail', async done => {
     const result = await Withings.newToken(mockUser, mockTokenData);
     expect(result).toBe(false);
+    done();
   });
 
-  it('newtoken with active user should succeed', async () => {
+  it('newtoken with active user should succeed', async done => {
     let user = await User.findOne({ username: mockUser.username });
     if (!user) {
       user = await User.create(mockUser);
@@ -51,5 +52,6 @@ describe('Withings functions', () => {
     // result.remove().exec();
 
     // TODO: fix this test
+    done();
   }, 10000);
 });

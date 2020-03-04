@@ -13,7 +13,48 @@ const routes = require('./routes/routes');
 
 const DB = require('./db');
 
-module.exports = mongoConfig => {
+class AApp {
+  constructor(app, agenda, db) {
+    this.app = app;
+    this.agenda = agenda;
+    this.db = db;
+  }
+  async listen(arg, test = false) {
+    if (test) await this.agenda.purge();
+    return this.app.listen(arg);
+  }
+  use(arg) {
+    this.app.use(arg);
+  }
+  async addJobs() {
+    this.agenda.define('fitbit sync', (job, done) => {
+      console.log('Fitbit sync in progress');
+      fitbitSync()
+        .then(done)
+        .catch(console.error);
+    });
+    this.agenda.define('withings sync', (job, done) => {
+      console.log('Withings sync in progress');
+      require('./jobs/withings_job')
+        .sync()
+        .then(done)
+        .catch(console.error);
+    });
+    await (async () => {
+      await this.agenda.start();
+      await this.agenda.every('20 minutes', 'fitbit sync');
+      await this.agenda.every('20 minutes', 'withings sync');
+      // await agenda.every('20 minutes', 'monitor heartrate');
+    })().catch(console.error);
+  }
+
+  // Only run after tests to not run jobs accidently
+  async end() {
+    await this.agenda.purge();
+  }
+}
+
+module.exports = async mongoConfig => {
   const app = new Koa();
   const agenda = new Agenda();
   const db = DB.init(mongoConfig);
@@ -36,26 +77,6 @@ module.exports = mongoConfig => {
 
   agenda.mongo(db);
 
-  agenda.define('fitbit sync', (job, done) => {
-    console.log('Fitbit sync in progress');
-    fitbitSync()
-      .then(done)
-      .catch(console.error);
-  });
-  agenda.define('withings sync', (job, done) => {
-    console.log('Withings sync in progress');
-    require('./jobs/withings_job')
-      .sync()
-      .then(done)
-      .catch(console.error);
-  });
-  (async () => {
-    await agenda.start();
-    await agenda.every('20 minutes', 'fitbit sync');
-    await agenda.every('20 minutes', 'withings sync');
-    // await agenda.every('20 minutes', 'monitor heartrate');
-  })().catch(console.error);
-
   /*
   const monitors = require('./jobs/monitors');
   
@@ -64,5 +85,5 @@ module.exports = mongoConfig => {
     monitors.heartRate().then(done).catch(console.error);
   });
   */
-  return app;
+  return new AApp(app, agenda, db);
 };

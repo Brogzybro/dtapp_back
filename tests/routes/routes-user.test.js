@@ -13,19 +13,20 @@ const testUser2 = {
 };
 
 const mongoTestConfig = require('../../config').mongo_test;
-const app = require('../../App')(mongoTestConfig);
+const appPromise = require('../../App');
 let server;
 
-beforeAll(done => {
-  server = app.listen(done);
+beforeAll(async done => {
+  const app = await appPromise(mongoTestConfig);
+  server = await app.listen(done, true);
 });
 
-afterAll(done => {
+afterAll(async done => {
   server.close(done);
 });
 
 describe('user tests', () => {
-  beforeAll(async () => {
+  beforeAll(async done => {
     // Remove user before tests if it exists
     const user = await User.findOne({ username: testUser.username });
     if (user) {
@@ -36,16 +37,18 @@ describe('user tests', () => {
       await user2.remove();
     }
     await User.create(testUser2);
+    done();
   });
 
-  it('create new user', async () => {
+  it('create new user', async done => {
     const result = await supertest(server)
       .post('/user')
       .send(testUser);
     expect(result.status).toEqual(201);
+    done();
   });
 
-  it('update user', async () => {
+  it('update user', async done => {
     const newUserDetails = {
       username: testUser.username,
       password: 'mynewpassword'
@@ -55,16 +58,18 @@ describe('user tests', () => {
       .send(newUserDetails)
       .set('Authorization', tUtils.genAuthToken(testUser));
     expect(result.status).toEqual(201);
+    done();
   });
 
-  it('create user that already exists should fail', async () => {
+  it('create user that already exists should fail', async done => {
     const result = await supertest(server)
       .post('/user')
       .send(testUser);
     expect(result.status).toEqual(422);
+    done();
   });
 
-  it('update user to name that already exists should fail', async () => {
+  it('update user to name that already exists should fail', async done => {
     const newUserDetails = {
       username: testUser.username,
       password: testUser2.password
@@ -74,5 +79,6 @@ describe('user tests', () => {
       .send(newUserDetails)
       .set('Authorization', tUtils.genAuthToken(testUser2));
     expect(result.status).toEqual(422);
+    done();
   });
 });

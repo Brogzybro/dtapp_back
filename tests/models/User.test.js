@@ -5,7 +5,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
 const User = require('../../models/user');
 
-beforeAll(async () => {
+beforeAll(async done => {
   const uri = await mongod.getConnectionString();
 
   const mongooseOpts = {
@@ -14,34 +14,41 @@ beforeAll(async () => {
   };
 
   await mongoose.connect(uri, mongooseOpts);
+  done();
 });
 
-it('should be no users', async () => {
+it('should be no users', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
-it('should be no users2', async () => {
+it('should be no users2', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
-it('should be no users3', async () => {
+it('should be no users3', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
-it('should be no users4', async () => {
+it('should be no users4', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
-it('should be no users5', async () => {
+it('should be no users5', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
-it('should be no users6', async () => {
+it('should be no users6', async done => {
   const user = await User.findOne();
   expect(user).toBeNull();
+  done();
 });
 
-it('should add user', async () => {
+it('should add user', async done => {
   const user = new User({ username: 'blabla', password: 'yoyoyoyo' });
   let retUser = null;
   try {
@@ -50,6 +57,7 @@ it('should add user', async () => {
     console.warn(error);
   }
   expect(retUser).toEqual(user);
+  done();
 });
 
 // const User = require('../models/user');
