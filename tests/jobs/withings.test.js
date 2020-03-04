@@ -46,10 +46,11 @@ describe('withings job tests', () => {
     done();
   });
   it('should sync all (48) withings', async done => {
+    testlib.enableWinstonLogs();
     await WithingsToken.create(mockTokenWrongAccessToken);
     await withingsJob.sync(); //
     const samples = await Sample.find();
-    expect(samples.length).toBe(48);
+    expect(samples.length).toBe(236);
     done();
   });
 

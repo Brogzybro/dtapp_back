@@ -45,6 +45,14 @@ const router = new Router();
  *          - diastolicBloodPressure
  *          - systolicBloodPressure
  *          - ecg
+ *          - weight
+ *          - fatFreeMass
+ *          - fatRatio
+ *          - fatMassWeight
+ *          - bodyTemp
+ *          - muscleMass
+ *          - boneMass
+ *          - pulseWaveVelocity
  *      Sample:
  *        type: object
  *        properties:

@@ -8,12 +8,11 @@ const mongoose = require('mongoose');
 
 async function sync() {
   logger.info('[JOB] Running...');
-  logger.error('bro');
   const samples = [];
   for await (const token of WithingsToken.find()) {
     // TODO: make into class so refresh token is updated betwenn calls
 
-    logger.info('userid %o', token.user);
+    logger.info('syncing user %o', token.user);
 
     samples.push(...(await syncSleep(token)));
 
@@ -140,7 +139,7 @@ async function syncHeart(token) {
     params.startdate = latestTime + 1;
   }
 
-  logger.info('latestTimee ' + params.startdate);
+  // logger.info('latestTimee ' + params.startdate);
 
   const body = await withingsRequest(
     () => request.get(heartListURL).query(params),
@@ -200,6 +199,38 @@ async function syncHeart(token) {
 
 const MEASURES = [
   {
+    type: 'weight',
+    value: 1
+  },
+  {
+    type: 'fatFreeMass',
+    value: 5
+  },
+  {
+    type: 'fatRatio',
+    value: 6
+  },
+  {
+    type: 'fatMassWeight',
+    value: 8
+  },
+  {
+    type: 'bodyTemp',
+    value: 71
+  },
+  {
+    type: 'muscleMass',
+    value: 76
+  },
+  {
+    type: 'boneMass',
+    value: 88
+  },
+  {
+    type: 'pulseWaveVelocity',
+    value: 91
+  },
+  {
     type: 'diastolicBloodPressure',
     value: 9
   },
@@ -230,7 +261,7 @@ async function syncMeasure(token, measureEntry) {
     // we add 5 seconds, we might lose a measure because of this, but fuck it
     latestTime = latest.startDate.getTime() / 1000 + 5; // + 5;
     // logger.info('latest time: ' + latestTime);
-    logger.info(latestTime);
+    // logger.info(latestTime);
   }
 
   try {

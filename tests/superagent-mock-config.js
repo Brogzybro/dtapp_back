@@ -98,17 +98,44 @@ module.exports.config = [
       console.info(urlS);
       console.info('authorization:', headers['Authorization']);
 
+      if (headers['Authorization'] !== 'Bearer ' + validAccessToken)
+        return measureResponses.invalidAccessToken;
+
       switch (urlS.get('meastype')) {
+        case '1':
+          console.log('got 1');
+          return measureResponses.successWeight;
+        case '5':
+          console.log('got 5');
+          return measureResponses.successFatFreeMass;
+        case '6':
+          console.log('got 6');
+          return measureResponses.successFatRatio;
+        case '8':
+          console.log('got 8');
+          return measureResponses.successFatMassWeight;
+        case '71':
+          console.log('got 71');
+          return measureResponses.successBodyTemp;
+        case '76':
+          console.log('got 76');
+          return measureResponses.successMuscleMass;
+        case '88':
+          console.log('got 88');
+          return measureResponses.successBoneMass;
+        case '91':
+          console.log('got 91');
+          return measureResponses.successPulseWaveVelocity;
+        case '9':
+          console.log('got 9');
+          return measureResponses.successType9;
         case '10':
           console.log('got 10');
-          break;
+          return measureResponses.successType10;
         default:
           console.log('something else ' + urlS.get('meastype'));
-          break;
+          return measureResponses.successEmpty;
       }
-      if (headers['Authorization'] === 'Bearer ' + validAccessToken)
-        return measureResponses.successType9;
-      else return measureResponses.invalidAccessToken;
     },
 
     /**
