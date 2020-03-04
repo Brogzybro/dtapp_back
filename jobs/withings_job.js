@@ -235,7 +235,7 @@ async function syncMeasure(
   measureUrl
 ) {
   const samples = [];
-  const latest = await Sample.findLatestCreated({
+  const latest = await Sample.findLatest({
     user: userId,
     type: measureEntry.type,
     source: 'withings'
@@ -245,7 +245,7 @@ async function syncMeasure(
   if (latest) {
     // Because the withings api is retarded and does not track lastupdate properly
     // we add 5 seconds, we might lose a measure because of this, but fuck it
-    latestTime = latest.created.getTime() / 1000 + 5; // + 5;
+    latestTime = latest.startDate.getTime() / 1000 + 5; // + 5;
     // logger.info('latest time: ' + latestTime);
     logger.info(latestTime);
   }
@@ -257,7 +257,7 @@ async function syncMeasure(
       meastype: measureEntry.value
     };
     if (latestTime) {
-      queries.lastupdate = latestTime;
+      queries.startdate = latestTime;
       // queries.lastupdate = 1570458535;
     }
 
