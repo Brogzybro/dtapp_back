@@ -1,17 +1,33 @@
 const Sample = require('../models/sample_model');
+const logger = require('../config').winston.loggers.default;
 
 exports.list = async ctx => {
   const { user } = ctx.state;
-  const { type, startDate, endDate, limit, offset } = ctx.query;
+  const { type, startDate, endDate, limit, offset, source } = ctx.query;
 
   const query = Sample.find({ user: user.id }).sort('-startDate');
 
-  console.log('Sample request from user ' + user);
-  console.log('type: ' + type);
-  console.log('startDate: ' + startDate);
-  console.log('endDate: ' + endDate);
-  console.log('limit: ' + limit);
-  console.log('offset: ' + offset);
+  logger.info(
+    'Sample request from user ' +
+      user +
+      '{type: ' +
+      type +
+      ', startDate: ' +
+      startDate +
+      ', endDate: ' +
+      endDate +
+      ', limit: ' +
+      limit +
+      ', offset: ' +
+      offset +
+      ', source: ' +
+      source +
+      '}'
+  );
+
+  if (source) {
+    query.where('source').eq(source);
+  }
 
   if (type) {
     query.where('type').eq(type);

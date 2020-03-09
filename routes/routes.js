@@ -293,6 +293,12 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  *            type: int
  *          required: false
  *          description: End date to filter before
+ *        - in: query
+ *          name: source
+ *          schema:
+ *            type: string
+ *          required: false
+ *          description: Limit to one type of source
  *      responses:
  *        default:
  *          description: Sample entries requested
