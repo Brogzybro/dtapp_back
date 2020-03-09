@@ -6,6 +6,20 @@ const superagentMockConfig = require('./../superagent-mock-config');
 let superagentMock;
 const loggers = require('../../config').winston.loggers;
 const withingsLogger = loggers.withings;
+const mockData = require('../superagent-mock-data');
+const User = require('../../models/user_model');
+const WithingsToken = require('../../models/withings_token_model');
+const WithingsJob = require('../../jobs/withings_job');
+
+exports.addMockUserAndSyncMockData = async () => {
+  const user = await User.create(mockData.mockUser);
+  await WithingsToken.create({
+    user: user,
+    data: mockData.mockTokenValidAccessToken.data
+  });
+  await WithingsJob.sync();
+  return user;
+};
 
 exports.setupApp = async () => {
   this.disableLog('info');
@@ -20,6 +34,8 @@ exports.setup = async (
   setupMock = true,
   disableDb = true
 ) => {
+  this.disableLog('info');
+  this.disableLog('log');
   if (disableWinston) this.setupDisableLogsWinston();
   if (setupMock) this.setupMock();
   if (disableDb) await this.setupDb();

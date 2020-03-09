@@ -1,11 +1,15 @@
 const withingsConfig = require('../config').withings;
+const fitbitConfig = require('../config').fitbit;
+const logger = require('../config').winston.loggers.default;
 const {
   measureResponses,
   sleepResponses,
   tokenResponses,
   validAccessToken,
   heartGetResponses,
-  heartListResponses
+  heartListResponses,
+  getDeviceResponses,
+  getFitbitDevicesResponses
 } = require('./superagent-mock-data');
 
 function urlToRegEx(url) {
@@ -13,6 +17,43 @@ function urlToRegEx(url) {
 }
 
 module.exports.config = [
+  {
+    // full url doesnt match for some reason, so manual typed
+    pattern: urlToRegEx(fitbitConfig.apiURL + '/1/user/-/devices.json'),
+    fixtures: function(match, params, headers, context) {
+      logger.info('request fitbit getDeviceURL');
+      logger.info('match %o', match);
+      logger.info('headers %o', headers);
+      if (headers['Authorization'] === 'Bearer ' + validAccessToken)
+        return getFitbitDevicesResponses.success;
+      else return getFitbitDevicesResponses.invalidAccessToken;
+    },
+    get: function(match, data) {
+      return {
+        body: JSON.parse(data),
+        text: data,
+        status: 200
+      };
+    }
+  },
+  {
+    // full url doesnt match for some reason, so manual typed
+    pattern: urlToRegEx(withingsConfig.getDeviceURL),
+    fixtures: function(match, params, headers, context) {
+      console.info('request getDeviceURL');
+      console.info(match);
+      if (headers['Authorization'] === 'Bearer ' + validAccessToken)
+        return getDeviceResponses.success;
+      else return getDeviceResponses.invalidAccessToken;
+    },
+    get: function(match, data) {
+      return {
+        body: JSON.parse(data),
+        text: data,
+        status: 200
+      };
+    }
+  },
   {
     // full url doesnt match for some reason, so manual typed
     pattern: urlToRegEx(withingsConfig.sleepSummaryURL),

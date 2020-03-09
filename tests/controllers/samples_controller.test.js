@@ -10,6 +10,7 @@ const User = require('../../models/user_model');
 const WithingsJob = require('../../jobs/withings_job');
 const mockData = require('../superagent-mock-data');
 const WithingsToken = require('../../models/withings_token_model');
+const FitbitJob = require('../../jobs/fitbit_job');
 
 /**
  * @type http.Server
@@ -44,11 +45,13 @@ it('Should only get samples from fitbit sources', async done => {
     data: mockData.mockTokenValidAccessToken.data
   });
   await WithingsJob.sync();
+  await FitbitJob();
   const res = await supertest(server)
     .get('/samples')
     .auth(withingsTestUser.username, withingsTestUser.password)
     .query({ source: 'fitbit' });
 
+  logger.info('#samples = %d', res.body.length);
   for (let sample of res.body) {
     logger.info('sample %o', sample.source);
     expect(sample.source).toEqual('fitbit');

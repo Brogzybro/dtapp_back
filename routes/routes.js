@@ -10,6 +10,7 @@ const withings = require('../controllers/withings_controller');
 const user = require('../controllers/user_controller');
 const samples = require('../controllers/samples_controller');
 const adminController = require('../controllers/admin_controller');
+const devicesController = require('../controllers/devices_controller');
 
 const router = new Router();
 
@@ -72,6 +73,17 @@ const router = new Router();
  *            type: string
  *          __v:
  *            type: integer
+ *      Device:
+ *        type: object
+ *        properties:
+ *          type:
+ *            type: string
+ *          battery:
+ *            type: string
+ *          model:
+ *            type: string
+ *          source:
+ *            type: string
  *
  * tags:
  *    - name: user
@@ -310,6 +322,28 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  *                  $ref: '#/components/schemas/Sample'
  */
 router.get('/samples', auth, samples.list);
+
+/**
+ * @swagger
+ *
+ * /devices:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Get devices
+ *      tags:
+ *        - devices
+ *      responses:
+ *        default:
+ *          description: List of devices
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Device'
+ */
+router.get('/devices', auth, devicesController.list);
 
 router.get('/admin', adminauth, adminController.adminCommand);
 

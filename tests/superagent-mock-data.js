@@ -24,6 +24,11 @@ module.exports.mockTokenValidAccessToken = {
   }
 };
 
+module.exports.mockUser = {
+  username: 'mocktestuser',
+  password: 'mocktestuserpassword'
+};
+
 // Sum of 48 samples
 
 module.exports.heartListResponses = {
@@ -93,4 +98,20 @@ module.exports.tokenResponses = {
     validAccessToken +
     '","expires_in":10800,"token_type":"Bearer","scope":"user.info,user.metrics,user.activity","refresh_token":"84151dcd36100bb76605675d5416a1abbf2e17d2","userid":19662645}',
   missingParams: '{"errors":[{"message":"invalid_params: invalid grant_type"}]}'
+};
+
+module.exports.getDeviceResponses = {
+  // 5 devices
+  success:
+    '{"status":0,"body":{"devices":[{"type":"Scale","battery":"low","model":"Body Cardio","model_id":6,"timezone":"Europe/Oslo","last_session_date":1583722027,"deviceid":"cea977b56062cf1ae75e8526b8a5c3e80f82406d"},{"type":"Smart Connected Thermometer","battery":"high","model":"Thermo","model_id":70,"timezone":"Europe/Oslo","last_session_date":1583407537,"deviceid":"489c4722f0401b2df845c90e19fb9288ccabc1dc"},{"type":"Sleep Monitor","battery":"high","model":"Aura Sensor V2","model_id":63,"timezone":"Europe/Oslo","last_session_date":1583771706,"deviceid":"14e9a55d2c1fa3c515c3ecb75fdf51e6f5f0f0c8"},{"type":"Blood Pressure Monitor","battery":"high","model":"Withings Blood Pressure Monitor V2","model_id":42,"timezone":"Europe/Oslo","last_session_date":1573306509,"deviceid":"db6f1410db71561bc9934baa3d4d6dc81eb8cdda"},{"type":"Blood Pressure Monitor","battery":"high","model":"BPM Core","model_id":44,"timezone":"Europe/Oslo","last_session_date":1583609188,"deviceid":"153570f9668b0259ffef08536f8f3ba879774490"}]}}',
+  invalidAccessToken:
+    '{"status":401,"body":{},"error":"XRequestID: Not provided invalid_token: The access token provided is invalid"}'
+};
+
+module.exports.getFitbitDevicesResponses = {
+  // 5 devices
+  success:
+    '[{"battery":"High","batteryLevel":92,"deviceVersion":"Charge 3","features":[],"id":"975137544","lastSyncTime":"2020-03-09T22:41:29.000","mac":"378F835A57FA","type":"TRACKER"}]',
+  invalidAccessToken:
+    '{"success":false,"errors":[{"errorType":"invalid_token","message":"Access token invalid: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkJDQ0YiLCJzdWIiOiI3VExEVjUiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyaHIgcnNldCByYWN0IHJwcm8gcnNsZSIsImV4cCI6MTU4MzgxODU2NCwiaWF0IjoxNTgzNzg5NzY0fQ._YIRwkjgTxOTVFb1zVD7WhgpM24auluJJfU-jb5Tg8. Visit https://dev.fitbit.com/docs/oauth2 for more information on the Fitbit Web API authorization process."}]}'
 };
