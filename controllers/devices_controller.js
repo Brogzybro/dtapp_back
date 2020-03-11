@@ -4,20 +4,23 @@ const FitbitClient = require('../lib/fitbit_client_lib');
 
 /**
  * Device data.
- * @typedef {Object<string, any>} GeneralDeviceInfo
+ * @typedef {Object} GeneralDeviceInfo
  * @property {string} type
  * @property {string} battery
  * @property {string} model
  * @property {string} source
  */
 
+/**
+ * @returns {Promise<GeneralDeviceInfo[]>} Devices promise
+ */
 exports.list = async ctx => {
   const { user } = ctx.state;
 
   const client = new FitbitClient(user);
 
   /**
-   * @type {[GeneralDeviceInfo]}
+   * @type {GeneralDeviceInfo[]}
    */
   const devices = [
     ...(await WithingsLib.getDevices(user)).map(device => ({
