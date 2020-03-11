@@ -27,7 +27,6 @@ afterEach(async done => {
 });
 
 it('Should get all devices from test data (6 total)', async done => {
-  testlib.enableWinstonLogs();
   const user = await testlib.addMockUserAndSyncMockData();
   user.fitbit = { accessToken: mockData.validAccessToken };
   await user.save();
