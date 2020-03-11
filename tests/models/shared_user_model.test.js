@@ -1,6 +1,6 @@
 const testlib = require('../_helpers/jobstestlib');
 const SharedUser = require('../../models/shared_user_model');
-const logger = require('../../config').winston.loggers.default;
+const logger = require('../../config').winston.loggers.defaultLogger;
 
 describe('shared user', () => {
   beforeEach(async done => {
@@ -21,7 +21,7 @@ describe('shared user', () => {
   });
   it('should create a bunch of sharedusers', async done => {
     // do something
-    testlib.enableWinstonLogs();
+    // testlib.enableWinstonLogs();
     try {
       await SharedUser.create().catch(e => logger.info(e));
       await SharedUser.create({});

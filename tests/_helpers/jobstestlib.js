@@ -5,7 +5,7 @@ const request = require('superagent');
 const superagentMockConfig = require('./../superagent-mock-config');
 let superagentMock;
 const loggers = require('../../config').winston.loggers;
-const withingsLogger = loggers.withings;
+const withingsLogger = loggers.withingsLogger;
 const mockData = require('../superagent-mock-data');
 const User = require('../../models/user_model');
 const WithingsToken = require('../../models/withings_token_model');

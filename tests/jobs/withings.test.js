@@ -4,7 +4,7 @@ const withingsJob = require('../../jobs/withings_job');
 const Sample = require('../../models/sample_model');
 const WithingsToken = require('../../models/withings_token_model');
 const testlib = require('../_helpers/jobstestlib');
-const withingsLogger = require('../../config').winston.loggers.withings;
+const withingsLogger = require('../../config').winston.loggers.withingsLogger;
 
 const { mockTokenWrongAccessToken } = require('../superagent-mock-data');
 

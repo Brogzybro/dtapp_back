@@ -13,4 +13,9 @@ const SharedUser = new Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+SharedUser.methods.shareWith = async function(otherUser) {
+  this.shared_with.push(otherUser);
+  await this.save();
+};
+
 module.exports = mongoose.model('SharedUser', SharedUser);

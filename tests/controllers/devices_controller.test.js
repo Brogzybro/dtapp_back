@@ -2,7 +2,7 @@ const appPromise = require('../../App');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 const testlib = require('../_helpers/jobstestlib');
-const logger = require('../../config').winston.loggers.default;
+const logger = require('../../config').winston.loggers.defaultLogger;
 const supertest = require('supertest');
 const mockData = require('../superagent-mock-data');
 

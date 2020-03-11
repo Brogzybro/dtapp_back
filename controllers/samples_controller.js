@@ -1,9 +1,19 @@
 const Sample = require('../models/sample_model');
-const logger = require('../config').winston.loggers.default;
+const logger = require('../config').winston.loggers.defaultLogger;
 
 exports.list = async ctx => {
   const { user } = ctx.state;
-  const { type, startDate, endDate, limit, offset, source } = ctx.query;
+  const {
+    type,
+    startDate,
+    endDate,
+    limit,
+    offset,
+    source,
+    otherUser
+  } = ctx.query;
+
+  logger.info('otherUser %o', otherUser);
 
   const query = Sample.find({ user: user.id }).sort('-startDate');
 

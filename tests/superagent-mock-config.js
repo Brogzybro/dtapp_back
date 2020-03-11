@@ -1,6 +1,6 @@
 const withingsConfig = require('../config').withings;
 const fitbitConfig = require('../config').fitbit;
-const logger = require('../config').winston.loggers.default;
+const logger = require('../config').winston.loggers.defaultLogger;
 const {
   measureResponses,
   sleepResponses,

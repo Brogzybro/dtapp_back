@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const request = require('superagent');
 const Config = require('../config').withings;
-const logger = require('../config').winston.loggers.withings;
+const logger = require('../config').winston.loggers.withingsLogger;
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 

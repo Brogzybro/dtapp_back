@@ -2,7 +2,7 @@ const request = require('superagent');
 const config = require('../config');
 const WithingsToken = require('../models/withings_token_model');
 const Sample = require('../models/sample_model');
-const logger = config.winston.loggers.withings;
+const logger = config.winston.loggers.withingsLogger;
 // eslint-disable-next-line no-unused-vars
 const mongoose = require('mongoose');
 
@@ -27,6 +27,7 @@ async function sync() {
   logger.info('[JOB] Added ' + samples.length + ' samples.');
   await Sample.insertMany(samples);
   logger.info('[JOB] Ended');
+  return samples.length;
 }
 
 /**

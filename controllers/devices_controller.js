@@ -1,4 +1,4 @@
-const logger = require('../config').winston.loggers.default;
+const logger = require('../config').winston.loggers.defaultLogger;
 const WithingsLib = require('../lib/withings_lib');
 const FitbitClient = require('../lib/fitbit_client_lib');
 

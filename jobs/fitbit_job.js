@@ -2,7 +2,7 @@ const User = require('../models/user_model');
 const Sample = require('../models/sample_model');
 const FitbitClient = require('../lib/fitbit_client_lib');
 const { DateTime } = require('luxon');
-const logger = require('../config').winston.loggers.fitbit;
+const logger = require('../config').winston.loggers.fitbitLogger;
 
 const fitbitActivities = {
   heart: {
@@ -95,6 +95,7 @@ async function syncActivity(endpoint, activity, user, client) {
   }
 
   await Sample.insertMany(samples);
+  return samples.length;
 }
 
 async function syncSleep(user, client) {
@@ -147,11 +148,13 @@ async function syncSleep(user, client) {
   }
 
   await Sample.insertMany(samples);
+  return samples.length;
 }
 
 async function sync() {
-  logger.info('[JOB FITBIT SYNC] Running...');
+  logger.info('[JOB] Running...');
   const activities = Object.keys(fitbitActivities);
+  let samplesAdded = 0;
 
   for await (const user of User.find()) {
     // Check that user actually has synced a fitbit account
@@ -163,12 +166,19 @@ async function sync() {
     // await user.save();
 
     for (let key of activities) {
-      await syncActivity(key, fitbitActivities[key], user, client);
+      samplesAdded += await syncActivity(
+        key,
+        fitbitActivities[key],
+        user,
+        client
+      );
     }
 
-    await syncSleep(user, client);
+    samplesAdded += await syncSleep(user, client);
   }
-  logger.info('[JOB FITBIT SYNC] Ended');
+  logger.info('[JOB] Added %d samples.', samplesAdded);
+  logger.info('[JOB] Ended');
+  return samplesAdded;
 }
 
 module.exports = sync;

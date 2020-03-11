@@ -4,7 +4,7 @@ const User = require('../models/user_model');
 const fitbitJob = require('../jobs/fitbit_job');
 const withingsJob = require('../jobs/withings_job');
 const SharedUser = require('../models/shared_user_model');
-const logger = require('../config').winston.loggers.default;
+const logger = require('../config').winston.loggers.defaultLogger;
 
 const commands = {
   fitbitsync: () => fitbitJob(),

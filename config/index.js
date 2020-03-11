@@ -54,7 +54,7 @@ const config = {
       /**
        * @type winston.Logger
        */
-      withings: (() => {
+      withingsLogger: (() => {
         if (global.withingsLogger) {
           return global.withingsLogger;
         }
@@ -67,7 +67,7 @@ const config = {
       /**
        * @type winston.Logger
        */
-      fitbit: (() => {
+      fitbitLogger: (() => {
         if (global.fitbitLogger) {
           return global.fitbitLogger;
         }
@@ -77,7 +77,17 @@ const config = {
       /**
        * @type winston.Logger
        */
-      default: (() => {
+      testLogger: (() => {
+        if (global.testLogger) {
+          return global.testLogger;
+        }
+        global.testLogger = loggerUtil.basicLogger('test.log', 'Test');
+        return global.testLogger;
+      })(),
+      /**
+       * @type winston.Logger
+       */
+      defaultLogger: (() => {
         if (global.generalLogger) {
           return global.generalLogger;
         }

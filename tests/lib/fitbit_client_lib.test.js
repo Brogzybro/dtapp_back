@@ -2,7 +2,7 @@ const testlib = require('../_helpers/jobstestlib');
 const FitbitClient = require('../../lib/fitbit_client_lib');
 const User = require('../../models/user_model');
 const MockData = require('../superagent-mock-data');
-const logger = require('../../config').winston.loggers.default;
+const logger = require('../../config').winston.loggers.defaultLogger;
 
 describe('fitbit lib group', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('fitbit lib group', () => {
   });
   it('fitbit lib test', async done => {
     // do something
-    testlib.enableWinstonLogs();
+    // testlib.enableWinstonLogs();
     let user = User.create(MockData.mockUser);
     user.fitbit = { accessToken: MockData.validAccessToken };
     const client = new FitbitClient(user);
