@@ -3,7 +3,7 @@ test.todo('some test to be written in the future');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
-const User = require('../../models/user');
+const User = require('../../models/user_model');
 
 beforeAll(async done => {
   const uri = await mongod.getConnectionString();
