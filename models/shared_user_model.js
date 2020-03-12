@@ -18,4 +18,8 @@ SharedUser.methods.shareWith = async function(otherUser) {
   await this.save();
 };
 
+SharedUser.methods.isSharedWith = function(otherUser) {
+  return this.shared_with.includes(otherUser.id);
+};
+
 module.exports = mongoose.model('SharedUser', SharedUser);

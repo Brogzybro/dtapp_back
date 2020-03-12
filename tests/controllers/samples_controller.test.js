@@ -30,20 +30,10 @@ const withingsTestUser = {
   password: 'withingstestpassword'
 };
 
-beforeEach(async done => {
-  testlib.enableWinstonLogs();
-  const uri = await testlib.setupApp();
-  app = await appPromise({ uri: uri });
-  server = await app.listen(() => {
-    logger.info('test server opened');
-    done();
-  }, true);
-  // console.log('withings test js listening on ' + server.address().port);
-});
-
-afterEach(async done => {
-  server.close(done);
-});
+const user2Obj = {
+  username: withingsTestUser.username + '2',
+  password: withingsTestUser.password
+};
 
 class Helpers {
   static async createUserWithWithingsToken(userObject) {
@@ -62,56 +52,114 @@ class Helpers {
     return samplesAdded;
   }
 }
+describe('samples controller group', () => {
+  beforeEach(async done => {
+    const uri = await testlib.setupApp();
+    app = await appPromise({ uri: uri });
+    server = await app.listen(done, true);
+    // console.log('withings test js listening on ' + server.address().port);
+  });
 
-it('Should get samples from a shared user of the user', async done => {
-  testlib.enableWinstonLogs();
-  const userWithSamples = await Helpers.createUserWithWithingsToken(
-    withingsTestUser
-  );
-  const samplesAdded = await Helpers.allSyncjobs();
-  logger.info('samples added %d', samplesAdded);
+  afterEach(async done => {
+    server.close(done);
+  });
 
-  const user2Obj = {
-    username: withingsTestUser.username + '2',
-    password: withingsTestUser.password
-  };
+  it('should fail with 401 for user not shared with (has no users shared with)', async done => {
+    const userWithSamples = await Helpers.createUserWithWithingsToken(
+      withingsTestUser
+    );
+    const samplesAdded = await Helpers.allSyncjobs();
+    logger.info('samples added %d', samplesAdded);
 
-  const user2 = await User.create(user2Obj);
+    const res = await supertest(server)
+      .get('/samples')
+      .query({ otherUser: userWithSamples.id })
+      .auth(user2Obj.username, user2Obj.password);
 
-  const sharedUser = await SharedUser.create({ user: userWithSamples });
-  await sharedUser.shareWith(user2);
+    expect(res.status).toBe(401);
+    done();
+  });
 
-  logger.info('is this undef? %o', userWithSamples.id);
-  const res = await supertest(server)
-    .get('/samples')
-    .query({ otherUser: userWithSamples._id })
-    .auth(user2Obj.username, user2Obj.password);
+  it('should fail with 401 for user not shared with (has at least one users shared)', async done => {
+    const userWithSamples = await Helpers.createUserWithWithingsToken(
+      withingsTestUser
+    );
+    const samplesAdded = await Helpers.allSyncjobs();
+    logger.info('samples added %d', samplesAdded);
 
-  expect(res.body.length).toBe(samplesAdded);
+    const sharedUser = await SharedUser.create({ user: userWithSamples });
+    // await sharedUser.shareWith(user2);
+    await sharedUser.shareWith(
+      await User.create({ username: 'yoyoyoyoy', password: 'yoyoyoyoyyo' })
+    );
 
-  logger.info(
-    'sharedUser %o, user %o, token %o, resbody: %o',
-    sharedUser,
-    userWithSamples,
-    await WithingsToken.findOne({ user: userWithSamples }),
-    res.body
-  );
-  done();
-});
+    const res = await supertest(server)
+      .get('/samples')
+      .query({ otherUser: userWithSamples.id })
+      .auth(user2Obj.username, user2Obj.password);
 
-it('Should only get samples from fitbit sources', async done => {
-  await Helpers.createUserWithWithingsToken(withingsTestUser);
-  await Helpers.allSyncjobs();
-  const res = await supertest(server)
-    .get('/samples')
-    .auth(withingsTestUser.username, withingsTestUser.password)
-    .query({ source: 'fitbit' });
+    expect(res.status).toBe(401);
+    done();
+  });
 
-  logger.info('#samples = %d', res.body.length);
-  for (let sample of res.body) {
-    logger.info('sample %o', sample.source);
-    expect(sample.source).toEqual('fitbit');
-  }
-  // logger.info('status: %o, body: %o', res.status, res.body);
-  done();
+  it('Should get samples from a shared user of the user', async done => {
+    const userWithSamples = await Helpers.createUserWithWithingsToken(
+      withingsTestUser
+    );
+    const samplesAdded = await Helpers.allSyncjobs();
+    logger.info('samples added %d', samplesAdded);
+
+    const user2 = await User.create(user2Obj);
+
+    const sharedUser = await SharedUser.create({ user: userWithSamples });
+    // await sharedUser.shareWith(user2);
+    await sharedUser.shareWith(user2);
+
+    const res = await supertest(server)
+      .get('/samples')
+      .query({ otherUser: userWithSamples.id })
+      .auth(user2Obj.username, user2Obj.password);
+
+    expect(res.body.length).toBe(samplesAdded);
+
+    logger.info(
+      'sharedUser %o, user %o, token %o, resbody: %o',
+      sharedUser,
+      userWithSamples,
+      await WithingsToken.findOne({ user: userWithSamples }),
+      res.body
+    );
+    done();
+  });
+
+  it('Should only get samples from fitbit sources', async done => {
+    await Helpers.createUserWithWithingsToken(withingsTestUser);
+    await Helpers.allSyncjobs();
+    const res = await supertest(server)
+      .get('/samples')
+      .auth(withingsTestUser.username, withingsTestUser.password)
+      .query({ source: 'fitbit' });
+
+    logger.info('#samples = %d', res.body.length);
+    for (let sample of res.body) {
+      logger.info('sample %o', sample.source);
+      expect(sample.source).toEqual('fitbit');
+    }
+    // logger.info('status: %o, body: %o', res.status, res.body);
+    done();
+  });
+
+  it('Should get more than 0 samples', async done => {
+    await Helpers.createUserWithWithingsToken(withingsTestUser);
+    await Helpers.allSyncjobs();
+    const res = await supertest(server)
+      .get('/samples')
+      .auth(withingsTestUser.username, withingsTestUser.password);
+
+    logger.info('#samples = %d', res.body.length);
+    expect(res.body.length).toBeGreaterThan(0);
+
+    // logger.info('status: %o, body: %o', res.status, res.body);
+    done();
+  });
 });

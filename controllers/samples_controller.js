@@ -1,4 +1,5 @@
 const Sample = require('../models/sample_model');
+const SharedUser = require('../models/shared_user_model');
 const logger = require('../config').winston.loggers.defaultLogger;
 
 exports.list = async ctx => {
@@ -13,9 +14,22 @@ exports.list = async ctx => {
     otherUser
   } = ctx.query;
 
-  logger.info('otherUser %o', otherUser);
+  let idOfUserToGet = user.id;
 
-  const query = Sample.find({ user: user.id }).sort('-startDate');
+  logger.info('otherUser %o', otherUser);
+  if (otherUser) {
+    const sharedUser = await SharedUser.findOne({ user: otherUser });
+    if (sharedUser.isSharedWith(user)) {
+      logger.info('Is Shared with');
+      idOfUserToGet = otherUser;
+    } else {
+      ctx.status = 401;
+      ctx.body = 'Access denied, user has not shared data with you.';
+      return;
+    }
+  }
+
+  const query = Sample.find({ user: idOfUserToGet }).sort('-startDate');
 
   logger.info(
     'Sample request from user ' +
