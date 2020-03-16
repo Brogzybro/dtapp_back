@@ -11,6 +11,7 @@ const user = require('../controllers/user_controller');
 const samples = require('../controllers/samples_controller');
 const adminController = require('../controllers/admin_controller');
 const devicesController = require('../controllers/devices_controller');
+const sharedUsers = require('../controllers/shared_users_controller');
 
 const router = new Router();
 
@@ -346,6 +347,14 @@ router.get('/samples', auth, samples.list);
 router.get('/devices', auth, devicesController.list);
 
 router.get('/admin', adminauth, adminController.adminCommand);
+
+router.get('/shared-users/shared-with-user', auth, sharedUsers.sharedWithUser);
+router.get(
+  '/shared-users/others-shared-with',
+  auth,
+  sharedUsers.othersSharedWith
+);
+router.get('/shared-users/share-with', auth, sharedUsers.shareWith);
 
 router.use(errors);
 

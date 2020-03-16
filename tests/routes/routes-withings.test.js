@@ -4,7 +4,7 @@ const configWithings = require('../../config/index').withings;
 const tUtils = require('../testutils');
 
 const mongoTestConfig = require('../../config').mongo_test;
-const appPromise = require('../../App');
+const { getApp: appPromise } = require('../../App');
 let server;
 
 beforeAll(async done => {

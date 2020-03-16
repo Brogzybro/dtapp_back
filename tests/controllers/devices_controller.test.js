@@ -1,4 +1,3 @@
-const appPromise = require('../../App');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 const testlib = require('../_helpers/jobstestlib');
@@ -6,31 +5,21 @@ const logger = require('../../config').winston.loggers.defaultLogger;
 const supertest = require('supertest');
 const mockData = require('../superagent-mock-data');
 
-/**
- * @type http.Server
- */
-let server;
+const app = new testlib.AppTester();
 
-/**
- * @type AApp
- */
-let app;
-
-beforeEach(async done => {
-  const uri = await testlib.setupApp();
-  app = await appPromise({ uri: uri });
-  server = await app.listen(done, true);
+beforeEach(async () => {
+  await app.setup();
 });
 
-afterEach(async done => {
-  server.close(done);
+afterEach(async () => {
+  await app.cleanup();
 });
 
 it('Should get all devices from test data (6 total)', async done => {
   const user = await testlib.addMockUserAndSyncMockData();
   user.fitbit = { accessToken: mockData.validAccessToken };
   await user.save();
-  const res = await supertest(server)
+  const res = await supertest(app.connection.server)
     .get('/devices')
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 

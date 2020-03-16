@@ -13,7 +13,7 @@ const testUser2 = {
 };
 
 const mongoTestConfig = require('../../config').mongo_test;
-const appPromise = require('../../App');
+const { getApp: appPromise } = require('../../App');
 let server;
 
 beforeAll(async done => {

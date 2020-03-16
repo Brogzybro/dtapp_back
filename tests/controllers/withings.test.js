@@ -4,7 +4,7 @@ const User = require('../../models/user_model');
 const auth = require('../../routes/middleware/auth');
 
 const mongoTestConfig = require('../../config').mongo_test;
-const appPromise = require('../../App');
+const { getApp: appPromise } = require('../../App');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 

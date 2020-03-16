@@ -1,4 +1,3 @@
-const appPromise = require('../App');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 const testlib = require('./_helpers/jobstestlib');
@@ -7,36 +6,27 @@ const logger = require('../config').winston.loggers.defaultLogger;
 const Agenda = require('agenda');
 
 /**
- * @type http.Server
+ * @type testlib.ConnectionData
  */
-let server;
-
-/**
- * @type AApp
- */
-let app;
+let connection;
 
 beforeEach(async done => {
-  const uri = await testlib.setupApp();
-  app = await appPromise({
-    uri: uri
-  });
-  server = await app.listen(done, true);
-  // console.log('withings test js listening on ' + server.address().port);
+  connection = await testlib.setupApp();
+  done();
 });
 
-afterEach(async done => {
+afterEach(async () => {
   await testlib.after();
-  server.close(done);
+  await testlib.afterApp(connection);
 });
 
-it('App should have no scheduled jobs', async () => {
+it.skip('App should have no scheduled jobs', async () => {
   logger.info('test');
-  const jobs = await app.agenda.jobs();
+  const jobs = await connection.app.agenda.jobs();
 
   expect(jobs.length).toBe(0);
   logger.info(
     'jobs %o',
-    (await app.agenda.jobs()).map(job => job.attrs)
+    (await connection.app.agenda.jobs()).map(job => job.attrs)
   );
 });

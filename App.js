@@ -5,6 +5,8 @@ const koaSwagger = require('koa2-swagger-ui');
 const Agenda = require('agenda');
 const cors = require('koa2-cors');
 const fitbitSync = require('./jobs/fitbit_job');
+// eslint-disable-next-line no-unused-vars
+const mongoose = require('mongoose');
 
 // Limit array length prints to 10
 require('util').inspect.defaultOptions.maxArrayLength = 10;
@@ -14,17 +16,25 @@ const routes = require('./routes/routes');
 const DB = require('./db');
 
 class AApp {
+  /**
+   * Creates an instance of AApp.
+   * @param {Koa} app
+   * @param {Agenda} agenda
+   * @param {mongoose.Connection} db
+   */
   constructor(app, agenda, db) {
     this.app = app;
     this.agenda = agenda;
     this.db = db;
   }
-  async listen(arg, test = false) {
-    if (test) await this.agenda.purge();
+  listen(arg) {
     return this.app.listen(arg);
   }
   use(arg) {
     this.app.use(arg);
+  }
+  callback() {
+    return this.app.callback();
   }
   async addJobs() {
     this.agenda.define('fitbit sync', (job, done) => {
@@ -54,7 +64,8 @@ class AApp {
   }
 }
 
-module.exports = async mongoConfig => {
+module.exports.AApp = AApp;
+module.exports.getApp = async mongoConfig => {
   const app = new Koa();
   const agenda = new Agenda();
   const db = DB.init(mongoConfig);

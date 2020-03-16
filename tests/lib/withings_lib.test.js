@@ -16,7 +16,7 @@ describe('withings lib group', () => {
   it('withings lib test', async done => {
     // do something
     const userInstance = await User.create(MockData.mockUser);
-    const tokenInstance = await WithingsToken.create({
+    await WithingsToken.create({
       user: userInstance,
       data: MockData.mockTokenValidAccessToken.data
     });

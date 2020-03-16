@@ -2,7 +2,7 @@ const config = require('./config');
 const logger = require('koa-logger');
 
 const mongoConfig = require('./config').mongo;
-const appPromise = require('./App');
+const { getApp: appPromise } = require('./App');
 
 appPromise(mongoConfig).then(app => {
   app.use(logger());
