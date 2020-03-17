@@ -14,7 +14,6 @@ const WithingsJob = require('../../jobs/withings_job');
 const { getApp: appPromise, AApp } = require('../../App');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
-const { performance } = require('perf_hooks');
 
 exports.addMockUserAndSyncMockData = async () => {
   const user = await User.create(mockData.mockUser);

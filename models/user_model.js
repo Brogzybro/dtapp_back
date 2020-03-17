@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 const Token = require('./token_model');
 
-const User = new Schema({
+const UserObj = {
   username: {
     type: String,
     required: [true, 'Username is required'],
@@ -19,15 +19,17 @@ const User = new Schema({
   iOS: {
     deviceTokens: [String]
   }
-});
+};
+
+const UserSchema = new Schema(UserObj);
 
 // TODO: Create indexes
 
 // Virtual attribute for plaintext password
-User.virtual('password');
+UserSchema.virtual('password');
 
 // Validate and hash passwords
-User.pre('validate', async function() {
+UserSchema.pre('validate', async function() {
   if (!this.password) {
     if (this.isNew) this.invalidate('password', 'Password is required');
     return;
@@ -42,12 +44,12 @@ User.pre('validate', async function() {
 });
 
 // Authenticate user
-User.method('authenticate', function(password) {
+UserSchema.method('authenticate', function(password) {
   return bcrypt.compare(password, this.passwordHash);
 });
 
 // Generate temporary token
-User.method('generateToken', async function() {
+UserSchema.method('generateToken', async function() {
   const existingTokens = await Token.find({ user: this.id });
   if (existingTokens) {
     await Token.deleteMany({ user: this.id });
@@ -57,9 +59,18 @@ User.method('generateToken', async function() {
 });
 
 // Find by token
-User.static('findByToken', async function(token) {
+UserSchema.static('findByToken', async function(token) {
   const found = await Token.findOne({ token }).populate('user');
   if (found) return found.user;
 });
 
-module.exports = mongoose.model('User', User);
+/**
+ * @typedef User
+ * @type {mongoose.Document &
+ * UserObj &
+ * mongoose.MongooseDocumentOptionals}
+ */
+/**
+ * @type {mongoose.Model<User, {}>
+ */
+module.exports = mongoose.model('User', UserSchema);

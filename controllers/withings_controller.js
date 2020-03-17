@@ -1,8 +1,7 @@
 const config = require('../config').withings;
 const Withings = require('../lib/withings_lib');
 const User = require('../models/user_model');
-// eslint-disable-next-line no-unused-vars
-const koa = require('koa');
+/** @typedef {import('koa').Context} Context */
 
 exports.checkTokenValidity = async ctx => {
   const { user } = ctx.state;
@@ -20,15 +19,20 @@ exports.auth = async ctx => {
 };
 
 /**
+ * @typedef {Object} QueryData
+ * @property {string} code The authorization code
+ * @property {string} state The state
+ */
+
+/**
  * Happens when withings redirects user back to our url with
  * authorization code and state. Then requests access token.
  *
- * @param {koa.Context} ctx
- * @param ctx.query.code The authorization code
- * @param ctx.query.state The state
+ * TODO query is broken, it doesn't show properties just "any"
+ * @param {Context & {query: QueryData}} ctx
  */
 exports.callback = async ctx => {
-  const { state, code } = ctx.query; // state
+  const { state, code } = ctx.query;
   const { clientID, clientSecret, redirectURI } = config;
   const user = await User.findByToken(state);
   ctx.assert(user, 401);
