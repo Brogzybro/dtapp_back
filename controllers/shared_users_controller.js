@@ -5,7 +5,7 @@ const logger = require('../config').winston.loggers.defaultLogger;
 /** @typedef {import('koa').Context} Context */
 
 /**
- * Gets a list of users that the users shares their data with
+ * Gets a list of users that share data with the user
  * @param {Context & {state: {user: User}}} ctx
  */
 exports.sharedWithUser = async ctx => {
@@ -25,7 +25,7 @@ exports.sharedWithUser = async ctx => {
 };
 
 /**
- * Gets a list of users that share data with the user
+ * Gets a list of users that the user shares their data with
  * @param {Context & {state: {user: User}}} ctx
  */
 exports.othersSharedWith = async ctx => {
@@ -33,15 +33,12 @@ exports.othersSharedWith = async ctx => {
     user: { id: userId }
   } = ctx.state;
 
-  logger.info('id %o', userId);
-
-  const sharedUser = await SharedUser.findOne({ user: userId });
-  if (!sharedUser) {
+  const sharedUsers = await SharedUser.find({ user: userId });
+  if (!sharedUsers) {
     ctx.body = [];
     return;
   }
-  logger.info('shared with %o', sharedUser.shared_with);
-  ctx.body = sharedUser.shared_with;
+  ctx.body = sharedUsers.map(user => user.shared_with);
 };
 
 /**
