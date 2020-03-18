@@ -28,7 +28,7 @@ exports.auth = async ctx => {
  * Happens when withings redirects user back to our url with
  * authorization code and state. Then requests access token.
  *
- * TODO query is broken, it doesn't show properties just "any"
+ * TODO query jsdoc is broken, it doesn't show properties just "any"
  * @param {Context & {query: QueryData}} ctx
  */
 exports.callback = async ctx => {
