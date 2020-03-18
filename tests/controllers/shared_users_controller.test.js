@@ -14,22 +14,31 @@ afterEach(async () => {
 
 describe('/shared-users/shared-with-user', () => {
   it('share with five users', async () => {
-    testlib.enableWinstonLogs();
     const usersObjsToShareWith = [...Array(5)].map((_, i) => ({
       username: mockData.mockUser.username + i,
       password: mockData.mockUser.password
     }));
     const usersToShareWith = await Promise.all(
-      usersObjsToShareWith.map(async userObj => Helpers.createUser(userObj))
+      usersObjsToShareWith.map(userObj => Helpers.createUser(userObj))
     );
-    logger.info('arr %o', usersToShareWith);
     const userThatShares = await Helpers.createUser(mockData.mockUser);
+    logger.info(
+      'userThatShares %o, usersToShareWith %o',
+      userThatShares,
+      usersToShareWith
+    );
     await Helpers.createSharedUser(userThatShares, usersToShareWith);
+    logger.info('hmm1');
     const res = await supertest(app.connection.server)
       .get('/shared-users/shared-with-user')
       .auth(mockData.mockUser.username, mockData.mockUser.password);
+    logger.info('hmm2');
     logger.info('res status %o, body %o', res.status, res.body);
+    expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBe(5);
+    const userIds = usersToShareWith.map(user => user.id);
+    logger.info('userIds %o', userIds);
+    expect(res.body.every(v => userIds.includes(v))).toBe(true);
   });
 
   it('with collection entry, but empty returns empty array', async () => {

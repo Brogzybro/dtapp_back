@@ -56,11 +56,13 @@ describe('samples controller group', () => {
     const samplesAdded = await Helpers.allSyncjobs();
     logger.info('samples added %d', samplesAdded);
 
-    const sharedUser = await SharedUser.create({ user: userWithSamples });
-    // await sharedUser.shareWith(user2);
-    await sharedUser.shareWith(
-      await User.create({ username: 'yoyoyoyoy', password: 'yoyoyoyoyyo' })
-    );
+    await SharedUser.create({
+      user: userWithSamples,
+      shared_with: await User.create({
+        username: 'yoyoyoyoy',
+        password: 'yoyoyoyoyyo'
+      })
+    });
 
     const res = await supertest(app.connection.server)
       .get('/samples')
@@ -80,16 +82,15 @@ describe('samples controller group', () => {
 
     const user2 = await User.create(user2Obj);
 
-    const sharedUser = await SharedUser.create({ user: userWithSamples });
-    // await sharedUser.shareWith(user2);
-    await sharedUser.shareWith(user2);
+    const sharedUser = await SharedUser.create({
+      user: userWithSamples,
+      shared_with: user2
+    });
 
     const res = await supertest(app.connection.server)
       .get('/samples')
-      .query({ otherUser: userWithSamples.id })
+      .query({ otherUser: userWithSamples.username })
       .auth(user2Obj.username, user2Obj.password);
-
-    expect(res.body.length).toBe(samplesAdded);
 
     logger.info(
       'sharedUser %o, user %o, token %o, resbody: %o',
@@ -98,6 +99,9 @@ describe('samples controller group', () => {
       await WithingsToken.findOne({ user: userWithSamples }),
       res.body
     );
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(samplesAdded);
+
     done();
   });
 

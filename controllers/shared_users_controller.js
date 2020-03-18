@@ -13,15 +13,12 @@ exports.sharedWithUser = async ctx => {
     user: { id: userId }
   } = ctx.state;
 
-  logger.info('id %o', userId);
-
-  const sharedUser = await SharedUser.findOne({ user: userId });
-  if (!sharedUser) {
+  const sharedUsers = await SharedUser.find({ user: userId });
+  if (!sharedUsers) {
     ctx.body = [];
     return;
   }
-  logger.info('shared with %o', sharedUser.shared_with);
-  ctx.body = sharedUser.shared_with;
+  ctx.body = sharedUsers.map(user => user.shared_with);
 
   // ctx.status = 503; // Service unavailable
   // ctx.body = 'incomplete';
@@ -32,12 +29,19 @@ exports.sharedWithUser = async ctx => {
  * @param {Context & {state: {user: User}}} ctx
  */
 exports.othersSharedWith = async ctx => {
-  const { user } = ctx.state;
+  const {
+    user: { id: userId }
+  } = ctx.state;
 
-  let idOfUserToGet = user.id;
+  logger.info('id %o', userId);
 
-  ctx.status = 503; // Service unavailable
-  ctx.body = 'incomplete';
+  const sharedUser = await SharedUser.findOne({ user: userId });
+  if (!sharedUser) {
+    ctx.body = [];
+    return;
+  }
+  logger.info('shared with %o', sharedUser.shared_with);
+  ctx.body = sharedUser.shared_with;
 };
 
 /**

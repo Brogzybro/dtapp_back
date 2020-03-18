@@ -7,7 +7,7 @@ const WithingsToken = require('../../models/withings_token_model');
 const SharedUser = require('../../models/shared_user_model');
 
 class Helpers {
-  /** @param {User} userObject */
+  /** @param {Object} userObject */
   static async createUser(userObject) {
     return User.create(userObject);
   }
@@ -17,13 +17,17 @@ class Helpers {
    * @param {User[]} usersToShareWith
    */
   static async createSharedUser(userThatShares, usersToShareWith = []) {
-    return SharedUser.create({
-      user: userThatShares,
-      shared_with: usersToShareWith.map(user => user.id)
-    });
+    return Promise.all(
+      usersToShareWith.map(userToShareWith => {
+        return SharedUser.create({
+          user: userThatShares,
+          shared_with: userToShareWith
+        });
+      })
+    );
   }
 
-  /** @param {User} userObject */
+  /** @param {Object} userObject */
   static async createUserWithWithingsToken(userObject) {
     const user = await User.create(userObject);
 

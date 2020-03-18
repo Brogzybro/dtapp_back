@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 const Token = require('./token_model');
+const SharedUser = require('./shared_user_model');
 
 const UserObj = {
   username: {
@@ -44,32 +45,52 @@ UserSchema.pre('validate', async function() {
 });
 
 // Authenticate user
-UserSchema.method('authenticate', function(password) {
+UserSchema.methods.authenticate = function(password) {
   return bcrypt.compare(password, this.passwordHash);
-});
+};
 
 // Generate temporary token
-UserSchema.method('generateToken', async function() {
+UserSchema.methods.generateToken = async function() {
   const existingTokens = await Token.find({ user: this.id });
   if (existingTokens) {
     await Token.deleteMany({ user: this.id });
   }
   const token = await Token.create({ user: this.id });
   return token;
-});
+};
 
 // Find by token
-UserSchema.static('findByToken', async function(token) {
+UserSchema.statics.findByToken = async function(token) {
   const found = await Token.findOne({ token }).populate('user');
   if (found) return found.user;
-});
+};
+
+// const methods = {
+//   isSharedWith: async function(otherUser) {
+//     const sharedUsers = await SharedUser.find({ user: this.user });
+//     const sharedUsersIds = sharedUsers.map(user => user.shared_with);
+//     return sharedUsersIds.includes(otherUser.id);
+//   }
+// };
+
+// UserSchema.methods = {
+//   ...UserSchema.methods,
+//   methods
+// };
+
+UserSchema.methods.isSharedWith = async function(otherUser) {
+  return Boolean(SharedUser.findOne({ user: this, shared_with: otherUser }));
+};
 
 /**
  * @typedef User
  * @type {mongoose.Document &
  * UserObj &
- * mongoose.MongooseDocumentOptionals}
+ * mongoose.MongooseDocumentOptionals &
+ * UserSchema.methods
+ * UserSchema.statics}
  */
+
 /**
  * @type {mongoose.Model<User, {}>
  */
