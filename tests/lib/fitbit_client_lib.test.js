@@ -15,7 +15,6 @@ describe('fitbit lib group', () => {
   });
   it('fitbit lib test', async done => {
     // do something
-    // testlib.enableWinstonLogs();
     let user = User.create(MockData.mockUser);
     user.fitbit = { accessToken: MockData.validAccessToken };
     const client = new FitbitClient(user);
