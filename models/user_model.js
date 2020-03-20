@@ -78,8 +78,21 @@ UserSchema.statics.findByToken = async function(token) {
 //   methods
 // };
 
+/**
+ * @param {User} otherUser
+ */
 UserSchema.methods.isSharedWith = async function(otherUser) {
   return Boolean(SharedUser.findOne({ user: this, shared_with: otherUser }));
+};
+
+/**
+ * @param {User} otherUser
+ * @returns {User} Returns user shared with, or null if already shared
+ */
+UserSchema.methods.shareWith = async function(otherUser) {
+  if (await SharedUser.findOne({ user: this, shared_with: otherUser }))
+    return null;
+  return SharedUser.create({ user: this, shared_with: otherUser });
 };
 
 /**

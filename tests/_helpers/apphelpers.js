@@ -14,15 +14,23 @@ class Helpers {
 
   /**
    * @param {User} userThatShares
+   * @param {User} userToShareWith
+   */
+  static async createSharedUser(userThatShares, userToShareWith) {
+    return SharedUser.create({
+      user: userThatShares,
+      shared_with: userToShareWith
+    });
+  }
+
+  /**
+   * @param {User} userThatShares
    * @param {User[]} usersToShareWith
    */
-  static async createSharedUser(userThatShares, usersToShareWith = []) {
+  static async createSharedUserMultiple(userThatShares, usersToShareWith = []) {
     return Promise.all(
       usersToShareWith.map(userToShareWith => {
-        return SharedUser.create({
-          user: userThatShares,
-          shared_with: userToShareWith
-        });
+        this.createSharedUser(userThatShares, userToShareWith);
       })
     );
   }
@@ -43,6 +51,14 @@ class Helpers {
     samplesAdded += await WithingsJob.sync();
     samplesAdded += await FitbitJob();
     return samplesAdded;
+  }
+
+  /**
+   * @param {Number} numElements
+   * @param {function(Number):void} callback (index)=>{}
+   */
+  static generateArray(numElements, callback) {
+    return [...Array(5)].map((_, i) => callback(i));
   }
 }
 

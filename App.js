@@ -68,7 +68,7 @@ module.exports.AApp = AApp;
 module.exports.getApp = async mongoConfig => {
   const app = new Koa();
   const agenda = new Agenda();
-  const db = DB.init(mongoConfig);
+  const db = await DB.init(mongoConfig);
 
   app.use(cors());
   app.use(bodyparser({ jsonLimit: 10000000 }));

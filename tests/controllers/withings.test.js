@@ -78,14 +78,14 @@ beforeAll(async done => {
   done();
 });
 
-test('should log in', async done => {
+test.skip('should log in', async done => {
   await auth(mockAuthCtx, () => {});
   // console.log(mockAuthCtx);
   expect(true).toBeTruthy();
   done();
 });
 
-test('should remove the user', async done => {
+test.skip('should remove the user', async done => {
   await User.deleteOne({ username: mockUser.username });
   done();
 });
