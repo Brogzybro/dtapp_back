@@ -1,8 +1,8 @@
-const testlib = require('../_helpers/jobstestlib');
-const mockData = require('../superagent-mock-data');
+const testlib = require('../../_helpers/jobstestlib');
+const mockData = require('../../superagent-mock-data');
 const supertest = require('supertest');
-const logger = require('../../config').winston.loggers.testLogger;
-const { Helpers } = require('../_helpers/apphelpers');
+const logger = require('../../../config').winston.loggers.testLogger;
+const { Helpers } = require('../../_helpers/apphelpers');
 
 const app = new testlib.AppTester();
 beforeEach(async () => {
