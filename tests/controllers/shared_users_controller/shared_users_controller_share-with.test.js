@@ -49,7 +49,6 @@ it('should fail with 422 for user already shared with', async () => {
 });
 
 it('should succeed with 201 when sharing with a valid user', async () => {
-  testlib.enableWinstonLogs();
   const userThatShares = await Helpers.createUser(mockData.mockUser);
   logger.info('userThatShares %o', userThatShares);
   const userToShareWith = await Helpers.createUser({
@@ -62,7 +61,6 @@ it('should succeed with 201 when sharing with a valid user', async () => {
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(201);
-  logger.info('res.status %o, res.body %o', res.status, res.body);
 });
 
 it('endpoint should exist and be restricted', async () => {

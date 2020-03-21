@@ -13,6 +13,8 @@ afterEach(async () => {
 });
 
 it('shared with five users should return 5 users', async () => {
+  testlib.enableWinstonLogs();
+
   const usersObjsThatShare = Helpers.generateArray(5, i => ({
     username: mockData.mockUser.username + i,
     password: mockData.mockUser.password
@@ -31,8 +33,8 @@ it('shared with five users should return 5 users', async () => {
     .auth(mockData.mockUser.username, mockData.mockUser.password);
   expect(Array.isArray(res.body)).toBe(true);
   expect(res.body.length).toBe(5);
-  const userIds = usersThatShare.map(user => user.id);
-  expect(res.body.every(v => userIds.includes(v))).toBe(true);
+  const usernames = usersThatShare.map(user => user.username);
+  expect(res.body.every(v => usernames.includes(v))).toBe(true);
 });
 
 it('/shared-users/shared-with-user endpoint should exist and be restricted', async () => {

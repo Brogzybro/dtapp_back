@@ -15,12 +15,14 @@ exports.sharedWithUser = async ctx => {
     user: { id: userId }
   } = ctx.state;
 
-  const sharedUsers = await SharedUser.find({ shared_with: userId });
+  const sharedUsers = await SharedUser.find({ shared_with: userId }).populate(
+    'user'
+  );
   if (!sharedUsers) {
     ctx.body = [];
     return;
   }
-  ctx.body = sharedUsers.map(sharedUser => sharedUser.user._id);
+  ctx.body = sharedUsers.map(sharedUser => sharedUser.user.username);
 };
 
 /**
@@ -33,12 +35,15 @@ exports.othersSharedWith = async ctx => {
     user: { id: userId }
   } = ctx.state;
 
-  const sharedUsers = await SharedUser.find({ user: userId });
+  const sharedUsers = await SharedUser.find({ user: userId }).populate(
+    'shared_with'
+  );
   if (!sharedUsers) {
     ctx.body = [];
     return;
   }
-  ctx.body = sharedUsers.map(user => user.shared_with);
+
+  ctx.body = sharedUsers.map(user => user.shared_with.username);
 };
 
 /**

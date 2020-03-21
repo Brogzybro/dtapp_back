@@ -158,9 +158,9 @@ async function sync() {
 
   for await (const user of User.find()) {
     // Check that user actually has synced a fitbit account
-    if (!user.fitbit.accessToken) continue;
-
     const client = new FitbitClient(user);
+    if (!client.hasFitbit()) continue;
+
     const profile = await client.profile();
     user.fitbit.timezone = profile.user.timezone;
     // await user.save();

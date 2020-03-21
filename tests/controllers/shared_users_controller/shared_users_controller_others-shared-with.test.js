@@ -27,8 +27,8 @@ it('shared with five users should return 5 users', async () => {
     .auth(mockData.mockUser.username, mockData.mockUser.password);
   expect(Array.isArray(res.body)).toBe(true);
   expect(res.body.length).toBe(5);
-  const userIds = usersToShareWith.map(user => user.id);
-  expect(res.body.every(v => userIds.includes(v))).toBe(true);
+  const usernames = usersToShareWith.map(user => user.username);
+  expect(res.body.every(v => usernames.includes(v))).toBe(true);
 });
 
 it('with no shared users returns empty array', async () => {

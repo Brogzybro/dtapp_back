@@ -42,7 +42,7 @@ describe('samples controller group', () => {
 
     const res = await supertest(app.connection.server)
       .get('/samples')
-      .query({ otherUser: userWithSamples.id })
+      .query({ otherUser: userWithSamples.username })
       .auth(user2Obj.username, user2Obj.password);
 
     expect(res.status).toBe(401);
@@ -64,9 +64,11 @@ describe('samples controller group', () => {
       })
     });
 
+    await Helpers.createUser(user2Obj);
+
     const res = await supertest(app.connection.server)
       .get('/samples')
-      .query({ otherUser: userWithSamples.id })
+      .query({ otherUser: userWithSamples.username })
       .auth(user2Obj.username, user2Obj.password);
 
     expect(res.status).toBe(401);

@@ -3,6 +3,7 @@ const Router = require('koa-router');
 const errors = require('./middleware/errors');
 const auth = require('./middleware/auth');
 const adminauth = require('./middleware/admin_auth');
+const sharing = require('./middleware/sharing');
 
 const healthkit = require('../controllers/healthkit_controller');
 const fitbit = require('../controllers/fitbit_controller');
@@ -322,7 +323,7 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  *                items:
  *                  $ref: '#/components/schemas/Sample'
  */
-router.get('/samples', auth, samples.list);
+router.get('/samples', auth, sharing, samples.list);
 
 /**
  * @swagger
@@ -344,7 +345,7 @@ router.get('/samples', auth, samples.list);
  *                items:
  *                  $ref: '#/components/schemas/Device'
  */
-router.get('/devices', auth, devicesController.list);
+router.get('/devices', auth, sharing, devicesController.list);
 
 router.get('/admin', adminauth, adminController.adminCommand);
 

@@ -37,7 +37,5 @@ exports.list = async ctx => {
     }))
   ];
 
-  logger.info('Devices request from user %o', user);
-
   ctx.body = devices;
 };
