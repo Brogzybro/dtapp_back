@@ -52,7 +52,7 @@ exports.othersSharedWith = async ctx => {
  */
 exports.shareWith = async ctx => {
   const { user } = ctx.state;
-  const { user: otherUserId } = ctx.query;
+  const { otherUser: otherUserId } = ctx.query;
 
   logger.info('otherUserId %o', otherUserId);
   if (!otherUserId) {
