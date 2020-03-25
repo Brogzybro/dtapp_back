@@ -52,16 +52,16 @@ exports.othersSharedWith = async ctx => {
  */
 exports.shareWith = async ctx => {
   const { user } = ctx.state;
-  const { otherUser: otherUserId } = ctx.query;
+  const { otherUser: otherUsername } = ctx.query;
 
-  logger.info('otherUserId %o', otherUserId);
-  if (!otherUserId) {
+  logger.info('otherUsername %o', otherUsername);
+  if (!otherUsername) {
     ctx.status = 400;
     ctx.body = { error: 'Missing user parameter.' };
     return;
   }
 
-  const otherUser = await User.findById(otherUserId);
+  const otherUser = await User.findOne({ username: otherUsername });
   logger.info('otherUser %o', otherUser);
   if (!otherUser) {
     ctx.status = 400;
