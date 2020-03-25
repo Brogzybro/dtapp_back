@@ -298,13 +298,13 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  *        - in: query
  *          name: startDate
  *          schema:
- *            type: int
+ *            type: integer
  *          required: false
  *          description: Start date to filter after
  *        - in: query
  *          name: endDate
  *          schema:
- *            type: int
+ *            type: integer
  *          required: false
  *          description: End date to filter before
  *        - in: query
@@ -313,6 +313,12 @@ router.get('/withings/isauthorized', auth, withings.checkTokenValidity);
  *            type: string
  *          required: false
  *          description: Limit to one type of source
+ *        - in: query
+ *          name: otherUser
+ *          schema:
+ *            type: string
+ *          required: false
+ *          description: Username of another user to get samples for
  *      responses:
  *        default:
  *          description: Sample entries requested
@@ -335,6 +341,13 @@ router.get('/samples', auth, sharing, samples.list);
  *      description: Get devices
  *      tags:
  *        - devices
+ *      parameters:
+ *        - in: query
+ *          name: otherUser
+ *          schema:
+ *            type: string
+ *          required: false
+ *          description: Username of another user to get devices for
  *      responses:
  *        default:
  *          description: List of devices
@@ -349,12 +362,103 @@ router.get('/devices', auth, sharing, devicesController.list);
 
 router.get('/admin', adminauth, adminController.adminCommand);
 
+/**
+ * @swagger
+ *
+ * /shared-users/shared-with-user:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Get a list of users shared with the current user
+ *      tags:
+ *        - sharing
+ *      responses:
+ *        default:
+ *          description: List of usernames shared with the user
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: string
+ *                items:
+ *                  type: string
+ */
 router.get('/shared-users/shared-with-user', auth, sharedUsers.sharedWithUser);
+
+/**
+ * @swagger
+ *
+ * /shared-users/others-shared-with:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Get a list of users the user has shared with
+ *      tags:
+ *        - sharing
+ *      responses:
+ *        default:
+ *          description: List of usernames shared with
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: string
+ *                items:
+ *                  type: string
+ */
 router.get(
   '/shared-users/others-shared-with',
   auth,
   sharedUsers.othersSharedWith
 );
+
+/**
+ * @swagger
+ *
+ * /shared-users/share-with:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Share samples with another user
+ *      tags:
+ *        - sharing
+ *      parameters:
+ *        - in: query
+ *          name: otherUser
+ *          schema:
+ *            type: string
+ *          required: false
+ *          description: Username of user to share with
+ *      responses:
+ *        '201':
+ *          description: Share created
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    description: Success message
+ *        '422':
+ *          description: Duplicate, user already shared with
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  error:
+ *                    type: string
+ *                    description: Error message
+ *        '400':
+ *          description: Failed other, description in error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  error:
+ *                    type: string
+ *                    description: Error message
+ */
 router.get('/shared-users/share-with', auth, sharedUsers.shareWith);
 
 router.use(errors);
