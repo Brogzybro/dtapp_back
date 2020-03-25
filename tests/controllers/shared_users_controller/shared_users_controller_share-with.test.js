@@ -38,11 +38,11 @@ it('should fail with 422 for user already shared with', async () => {
   });
   await supertest(app.connection.server)
     .get('/shared-users/share-with')
-    .query({ user: userToShareWith.id })
+    .query({ otherUser: userToShareWith.id })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
   const res = await supertest(app.connection.server)
     .get('/shared-users/share-with')
-    .query({ user: userToShareWith.id })
+    .query({ otherUser: userToShareWith.id })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(422);
@@ -57,7 +57,7 @@ it('should succeed with 201 when sharing with a valid user', async () => {
   });
   const res = await supertest(app.connection.server)
     .get('/shared-users/share-with')
-    .query({ user: userToShareWith.id })
+    .query({ otherUser: userToShareWith.id })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(201);
