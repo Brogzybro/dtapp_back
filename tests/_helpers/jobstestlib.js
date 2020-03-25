@@ -49,6 +49,8 @@ module.exports.AppTester = class {
 
     const uri = await mongod.getConnectionString(true);
     const app = await appPromise({ uri: uri });
+    await exports.ensureIndexes();
+
     const server = app.callback(); // app.listen();
     this.connection = { app, server };
   }
@@ -61,6 +63,11 @@ module.exports.AppTester = class {
       resolve();
     });
   }
+};
+
+/** Needed because indexes arent ensured at startup??? */
+exports.ensureIndexes = async () => {
+  await User.ensureIndexes();
 };
 
 exports.setup = async (
@@ -88,6 +95,7 @@ exports.setupDb = async () => {
     useUnifiedTopology: true,
     useCreateIndex: true
   });
+  await exports.ensureIndexes();
 };
 
 exports.disableDb = async () => {

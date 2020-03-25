@@ -26,7 +26,7 @@ exports.create = async ctx => {
  */
 exports.update = async ctx => {
   let { user } = ctx.state;
-  user.set(ctx.request.body);
+  user.password = ctx.request.body.password;
   const updatedUser = await user.save().catch(err => {
     if (err && err.code === 11000) {
       ctx.status = 422;
