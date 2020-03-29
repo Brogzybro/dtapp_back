@@ -459,7 +459,9 @@ router.get(
  *                    type: string
  *                    description: Error message
  */
-router.get('/shared-users/share-with', auth, sharedUsers.shareWith);
+router.post('/shared-users', auth, sharedUsers.add);
+
+router.delete('/shared-users/:user', auth, sharedUsers.remove);
 
 router.use(errors);
 

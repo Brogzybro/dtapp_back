@@ -16,7 +16,8 @@ it('should fail with 400 (bad request) when sharing with user that does not exis
   const userThatShares = await Helpers.createUser(mockData.mockUser);
   logger.info('userThatShares %o', userThatShares);
   const res = await supertest(app.connection.server)
-    .get('/shared-users/share-with?user=aaaaaaaaaaaaaaaaaaaaaaaa')
+    .post('/shared-users')
+    .send({ otherUser: 'aaaaaaaaaaaaa' })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(400);
@@ -24,7 +25,7 @@ it('should fail with 400 (bad request) when sharing with user that does not exis
 it('should fail with 400 (bad request) when not sending a user', async () => {
   await Helpers.createUser(mockData.mockUser);
   const res = await supertest(app.connection.server)
-    .get('/shared-users/share-with')
+    .post('/shared-users')
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(400);
@@ -37,12 +38,12 @@ it('should fail with 422 for user already shared with', async () => {
     password: mockData.mockUser.password
   });
   await supertest(app.connection.server)
-    .get('/shared-users/share-with')
-    .query({ otherUser: userToShareWith.username })
+    .post('/shared-users')
+    .send({ otherUser: userToShareWith.username })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
   const res = await supertest(app.connection.server)
-    .get('/shared-users/share-with')
-    .query({ otherUser: userToShareWith.username })
+    .post('/shared-users')
+    .send({ otherUser: userToShareWith.username })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(422);
@@ -56,8 +57,8 @@ it('should succeed with 201 when sharing with a valid user', async () => {
     password: mockData.mockUser.password
   });
   const res = await supertest(app.connection.server)
-    .get('/shared-users/share-with')
-    .query({ otherUser: userToShareWith.username })
+    .post('/shared-users')
+    .send({ otherUser: userToShareWith.username })
     .auth(mockData.mockUser.username, mockData.mockUser.password);
 
   expect(res.status).toBe(201);
@@ -65,7 +66,7 @@ it('should succeed with 201 when sharing with a valid user', async () => {
 
 it('endpoint should exist and be restricted', async () => {
   const res = await supertest(app.connection.server)
-    .get('/shared-users/share-with')
+    .post('/shared-users')
     .auth(mockData.mockUser.username, mockData.mockUser.password);
   logger.info('res %o', res.status);
   expect(res.status).toBe(401); // not 404 implied

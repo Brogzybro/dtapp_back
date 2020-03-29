@@ -50,9 +50,9 @@ exports.othersSharedWith = async ctx => {
  * Shares the user's data with another user
  * @param {Context & {state: {user: User}}} ctx
  */
-exports.shareWith = async ctx => {
+exports.add = async ctx => {
   const { user } = ctx.state;
-  const { otherUser: otherUsername } = ctx.query;
+  const { otherUser: otherUsername } = ctx.request.body;
 
   logger.info('otherUsername %o', otherUsername);
   if (!otherUsername) {
@@ -78,4 +78,35 @@ exports.shareWith = async ctx => {
 
   ctx.status = 201;
   ctx.body = { message: 'Share created.' };
+};
+
+/**
+ * Shares the user's data with another user
+ * @param {Context & {state: {user: User}}} ctx
+ */
+exports.remove = async ctx => {
+  const { user } = ctx.state;
+  const { user: usernameOfUserToRemove } = ctx.params;
+  console.debug('should remove user', usernameOfUserToRemove);
+
+  logger.info('usernameOfUserToRemove %o', usernameOfUserToRemove);
+  if (!usernameOfUserToRemove) {
+    ctx.status = 400;
+    ctx.body = { error: 'Missing user parameter.' };
+    return;
+  }
+
+  const userToRemove = await User.findOne({ username: usernameOfUserToRemove });
+  logger.info('otherUser %o', userToRemove);
+  if (!userToRemove) {
+    ctx.status = 400;
+    ctx.body = { error: 'User does not exist.' };
+    return;
+  }
+
+  // Should never fail, if user is not shared with it still succeeds
+  await user.removeShare(userToRemove);
+
+  ctx.status = 200;
+  ctx.body = { message: 'Share removed.' };
 };

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 const Token = require('./token_model');
 const SharedUser = require('./shared_user_model');
+const logger = require('../config').winston.loggers.defaultLogger;
 
 const UserObj = {
   username: {
@@ -95,6 +96,27 @@ UserSchema.methods.shareWith = async function(otherUser) {
   if (await SharedUser.findOne({ user: this, shared_with: otherUser }))
     return null;
   return SharedUser.create({ user: this, shared_with: otherUser });
+};
+
+/**
+ * @param {User} otherUser
+ * @returns {Boolean} success
+ */
+UserSchema.methods.removeShare = async function(otherUser) {
+  try {
+    const res = await SharedUser.deleteMany({
+      user: this,
+      shared_with: otherUser
+    });
+    return true;
+  } catch (error) {
+    logger.info(
+      'failed to remove share between users %o and %o',
+      this,
+      otherUser
+    );
+    return false;
+  }
 };
 
 /**
