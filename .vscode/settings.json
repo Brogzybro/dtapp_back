@@ -1,4 +1,5 @@
 {
     "jest.pathToConfig": "jest.config.js",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.foldingStrategy": "indentation"
 }
