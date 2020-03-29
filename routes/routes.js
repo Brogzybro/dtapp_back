@@ -413,19 +413,23 @@ router.get(
 /**
  * @swagger
  *
- * /shared-users/share-with:
- *    get:
+ * /shared-users:
+ *    post:
  *      security:
  *        - basicAuth: []
  *      description: Share samples with another user
  *      tags:
  *        - sharing
- *      parameters:
- *        - in: query
- *          name: otherUser
- *          schema:
- *            type: string
- *          required: false
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                otherUser:
+ *                  type: string
+ *                  description: username of user to share with
+ *          required: true
  *          description: Username of user to share with
  *      responses:
  *        '201':
@@ -461,7 +465,70 @@ router.get(
  */
 router.post('/shared-users', auth, sharedUsers.add);
 
+/**
+ * @swagger
+ *
+ * /shared-users/{user}:
+ *    delete:
+ *      security:
+ *        - basicAuth: []
+ *      description: Stop sharing samples with another user
+ *      tags:
+ *        - sharing
+ *      parameters:
+ *        - in: path
+ *          name: user
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: Username of user to stop sharing with
+ *      responses:
+ *        '200':
+ *          description: Share removed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    description: Success message
+ *        '400':
+ *          description: Failed other, description in error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  error:
+ *                    type: string
+ *                    description: Error message
+ */
 router.delete('/shared-users/:user', auth, sharedUsers.remove);
+
+/**
+ * @swagger
+ *
+ * /shared-users:
+ *    delete:
+ *      security:
+ *        - basicAuth: []
+ *      description: Stop sharing samples with all users
+ *      tags:
+ *        - sharing
+ *      responses:
+ *        '200':
+ *          description: Shares removed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    description: Success message
+ */
+router.delete('/shared-users', auth, sharedUsers.removeAll);
 
 router.use(errors);
 

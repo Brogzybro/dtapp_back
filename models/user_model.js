@@ -120,6 +120,24 @@ UserSchema.methods.removeShare = async function(otherUser) {
 };
 
 /**
+ * @returns {Boolean} success
+ */
+UserSchema.methods.removeShareAll = async function(otherUser) {
+  try {
+    const res = await SharedUser.deleteMany({
+      user: this
+    });
+    return true;
+  } catch (error) {
+    logger.info(
+      'failed to remove share between users %o and %o',
+      this,
+      otherUser
+    );
+    return false;
+  }
+};
+/**
  * @typedef User
  * @type {mongoose.Document &
  * UserObj &

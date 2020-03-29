@@ -87,7 +87,6 @@ exports.add = async ctx => {
 exports.remove = async ctx => {
   const { user } = ctx.state;
   const { user: usernameOfUserToRemove } = ctx.params;
-  console.debug('should remove user', usernameOfUserToRemove);
 
   logger.info('usernameOfUserToRemove %o', usernameOfUserToRemove);
   if (!usernameOfUserToRemove) {
@@ -109,4 +108,18 @@ exports.remove = async ctx => {
 
   ctx.status = 200;
   ctx.body = { message: 'Share removed.' };
+};
+
+/**
+ * Shares the user's data with another user
+ * @param {Context & {state: {user: User}}} ctx
+ */
+exports.removeAll = async ctx => {
+  const { user } = ctx.state;
+
+  // Should never fail, if user is not shared with it still succeeds
+  await user.removeShareAll();
+
+  ctx.status = 200;
+  ctx.body = { message: 'Shares removed.' };
 };
