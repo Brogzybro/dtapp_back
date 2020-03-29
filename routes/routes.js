@@ -421,6 +421,8 @@ router.get(
  *      tags:
  *        - sharing
  *      requestBody:
+ *        description: Username of user to share with
+ *        required: true
  *        content:
  *          application/json:
  *            schema:
@@ -429,8 +431,6 @@ router.get(
  *                otherUser:
  *                  type: string
  *                  description: username of user to share with
- *          required: true
- *          description: Username of user to share with
  *      responses:
  *        '201':
  *          description: Share created
