@@ -38,6 +38,7 @@ const router = new Router();
  *          password:
  *            type: string
  *      Type:
+ *        description: Enum of all the different types of samples supported by the API.
  *        type: string
  *        enum:
  *          - heartRate
@@ -89,9 +90,17 @@ const router = new Router();
  *
  * tags:
  *    - name: user
- *      description: Everything to do with user
+ *      description: Create and modify user, and generate token
  *    - name: withings
- *      description: Everything to do with withings
+ *      description: Add authorization for Withings
+ *    - name: fitbit
+ *      description: Add authorization for Fitbit
+ *    - name: samples
+ *      description: Access samples owned by or shared with  user
+ *    - name: devices
+ *      description: Access devices owned by or shared with user
+ *    - name: sharing
+ *      description: Add and remove users shared with, as well as get lists of them
  */
 
 /**
@@ -167,9 +176,9 @@ router.patch('/user', auth, user.update);
  *    post:
  *      security:
  *        - basicAuth: []
- *      description: Adds a token to user (used for fitbit auth)
+ *      description: Adds a token to user (used for fitbit and withings auth)
  *      tags:
- *        - fitbit
+ *        - user
  *      responses:
  *        default:
  *          description: Object containing the token
