@@ -33,6 +33,7 @@
     "koa2-cors": "^2.0.6",
     "koa2-swagger-ui": "^2.16.0",
     "luxon": "^1.22.0",
+    "mongodb": "^3.6.2",
     "mongoose": "^5.8.10",
     "request": "^2.88.0",
     "superagent": "^5.2.1",
