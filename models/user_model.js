@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 const Token = require('./token_model');
 const SharedUser = require('./shared_user_model');
+const { Int32 } = require('mongodb');
 const logger = require('../config').winston.loggers.defaultLogger;
 
 const UserObj = {
@@ -12,6 +13,10 @@ const UserObj = {
     unique: true
   },
   passwordHash: String,
+  age: {
+    type: Number,
+    required: [true, 'age is required'],
+  },
   fitbit: {
     userID: String,
     accessToken: String,
@@ -31,7 +36,7 @@ const UserSchema = new Schema(UserObj);
 UserSchema.virtual('password');
 
 // Validate and hash passwords
-UserSchema.pre('validate', async function() {
+UserSchema.pre('validate', async function () {
   if (!this.password) {
     if (this.isNew) this.invalidate('password', 'Password is required');
     return;
@@ -46,12 +51,12 @@ UserSchema.pre('validate', async function() {
 });
 
 // Authenticate user
-UserSchema.methods.authenticate = function(password) {
+UserSchema.methods.authenticate = function (password) {
   return bcrypt.compare(password, this.passwordHash);
 };
 
 // Generate temporary token
-UserSchema.methods.generateToken = async function() {
+UserSchema.methods.generateToken = async function () {
   const existingTokens = await Token.find({ user: this.id });
   if (existingTokens) {
     await Token.deleteMany({ user: this.id });
@@ -61,7 +66,7 @@ UserSchema.methods.generateToken = async function() {
 };
 
 // Find by token
-UserSchema.statics.findByToken = async function(token) {
+UserSchema.statics.findByToken = async function (token) {
   const found = await Token.findOne({ token }).populate('user');
   if (found) return found.user;
 };
@@ -82,7 +87,7 @@ UserSchema.statics.findByToken = async function(token) {
 /**
  * @param {User} otherUser
  */
-UserSchema.methods.isSharedWith = async function(otherUser) {
+UserSchema.methods.isSharedWith = async function (otherUser) {
   return Boolean(
     await SharedUser.findOne({ user: this, shared_with: otherUser })
   );
@@ -92,7 +97,7 @@ UserSchema.methods.isSharedWith = async function(otherUser) {
  * @param {User} otherUser
  * @returns {User} Returns user shared with, or null if already shared
  */
-UserSchema.methods.shareWith = async function(otherUser) {
+UserSchema.methods.shareWith = async function (otherUser) {
   if (await SharedUser.findOne({ user: this, shared_with: otherUser }))
     return null;
   return SharedUser.create({ user: this, shared_with: otherUser });
@@ -102,7 +107,7 @@ UserSchema.methods.shareWith = async function(otherUser) {
  * @param {User} otherUser
  * @returns {Boolean} success
  */
-UserSchema.methods.removeShare = async function(otherUser) {
+UserSchema.methods.removeShare = async function (otherUser) {
   try {
     const res = await SharedUser.deleteMany({
       user: this,
@@ -122,7 +127,7 @@ UserSchema.methods.removeShare = async function(otherUser) {
 /**
  * @returns {Boolean} success
  */
-UserSchema.methods.removeShareAll = async function(otherUser) {
+UserSchema.methods.removeShareAll = async function (otherUser) {
   try {
     const res = await SharedUser.deleteMany({
       user: this

@@ -108,7 +108,8 @@
         "type": "object",
         "required": [
           "password",
-          "username"
+          "username",
+          "age"
         ],
         "properties": {
           "username": {
@@ -116,6 +117,9 @@
           },
           "password": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
           }
         }
       }
