@@ -13,8 +13,8 @@ const UserObj = {
     unique: true
   },
   passwordHash: String,
-  age: {
-    type: Number,
+  birthDate: {
+    type: Date,
     required: [true, 'age is required'],
   },
   fitbit: {
