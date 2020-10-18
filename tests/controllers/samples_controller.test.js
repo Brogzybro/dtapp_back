@@ -16,12 +16,14 @@ const app = new testlib.AppTester();
 
 const withingsTestUser = {
   username: 'withingstestuser',
-  password: 'withingstestpassword'
+  password: 'withingstestpassword',
+  birthDate: new Date(1995, 11, 17)
 };
 
 const user2Obj = {
   username: withingsTestUser.username + '2',
-  password: withingsTestUser.password
+  password: withingsTestUser.password,
+  birthDate: new Date(1995, 11, 17)
 };
 
 describe('samples controller group', () => {
@@ -34,6 +36,7 @@ describe('samples controller group', () => {
   });
 
   it('should fail with 401 for user not shared with (has no users shared with)', async done => {
+    console.log(" IN SAMPLES CONTROLLER TEST");
     const userWithSamples = await Helpers.createUserWithWithingsToken(
       withingsTestUser
     );
@@ -60,7 +63,8 @@ describe('samples controller group', () => {
       user: userWithSamples,
       shared_with: await User.create({
         username: 'yoyoyoyoy',
-        password: 'yoyoyoyoyyo'
+        password: 'yoyoyoyoyyo',
+        birthDate: new Date(1995, 11, 17)
       })
     });
 
@@ -102,7 +106,9 @@ describe('samples controller group', () => {
       res.body
     );
     expect(res.status).toBe(200);
+
     expect(res.body.length).toBe(samplesAdded);
+    //expect(pred.body.length).toBe(samplesAdded);
 
     done();
   });

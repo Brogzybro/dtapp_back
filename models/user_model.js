@@ -15,7 +15,7 @@ const UserObj = {
   passwordHash: String,
   birthDate: {
     type: Date,
-    required: [true, 'age is required'],
+    required: [true, 'birthDate is required'],
   },
   fitbit: {
     userID: String,

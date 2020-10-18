@@ -49,7 +49,11 @@ it('should be no users6', async done => {
 });
 
 it('should add user', async done => {
-  const user = new User({ username: 'blabla', password: 'yoyoyoyo' });
+  const user = new User({
+    username: 'blabla',
+    password: 'yoyoyoyo',
+    birthDate: new Date(1995, 11, 17)
+  });
   let retUser = null;
   try {
     retUser = await user.save();

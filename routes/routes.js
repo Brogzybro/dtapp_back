@@ -13,6 +13,7 @@ const samples = require('../controllers/samples_controller');
 const adminController = require('../controllers/admin_controller');
 const devicesController = require('../controllers/devices_controller');
 const sharedUsers = require('../controllers/shared_users_controller');
+const prediction = require('../controllers/prediction_controller');
 
 const router = new Router();
 
@@ -538,6 +539,8 @@ router.delete('/shared-users/:user', auth, sharedUsers.remove);
  *                    description: Success message
  */
 router.delete('/shared-users', auth, sharedUsers.removeAll);
+
+router.get('/prediction', auth, prediction.getADiaSample);
 
 router.use(errors);
 

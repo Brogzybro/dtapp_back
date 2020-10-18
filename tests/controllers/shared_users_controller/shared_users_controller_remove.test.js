@@ -16,7 +16,8 @@ it('should remove user shared with', async () => {
   const userThatShares = await Helpers.createUser(mockData.mockUser);
   const userToShareWith = await Helpers.createUser({
     username: mockData.mockUser.username + '2',
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   });
   await userThatShares.shareWith(userToShareWith);
   const res = await supertest(app.connection.server)

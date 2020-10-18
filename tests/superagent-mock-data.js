@@ -26,7 +26,8 @@ module.exports.mockTokenValidAccessToken = {
 
 module.exports.mockUser = {
   username: 'mocktestuser',
-  password: 'mocktestuserpassword'
+  password: 'mocktestuserpassword',
+  birthDate: new Date(1995, 11, 17)
 };
 
 // Sum of 48 samples

@@ -18,7 +18,8 @@ afterAll(async done => {
 
 const withingsTestUser = {
   username: 'withingstestuser',
-  password: 'withingstestpassword'
+  password: 'withingstestpassword',
+  birthDate: new Date(1995, 11, 17)
 };
 
 describe.skip('withings tests', () => {

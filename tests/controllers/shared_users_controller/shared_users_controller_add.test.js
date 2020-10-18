@@ -35,7 +35,8 @@ it('should fail with 422 for user already shared with', async () => {
   const userThatShares = await Helpers.createUser(mockData.mockUser);
   const userToShareWith = await Helpers.createUser({
     username: mockData.mockUser.username + '2',
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   });
   await supertest(app.connection.server)
     .post('/shared-users')
@@ -54,7 +55,8 @@ it('should succeed with 201 when sharing with a valid user', async () => {
   logger.info('userThatShares %o', userThatShares);
   const userToShareWith = await Helpers.createUser({
     username: mockData.mockUser.username + '2',
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   });
   const res = await supertest(app.connection.server)
     .post('/shared-users')

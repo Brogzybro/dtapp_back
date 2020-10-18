@@ -34,7 +34,8 @@ const mockData = {
 
 const mockUser = {
   username: 'myuser11',
-  password: 'mysecretpasswoopedy'
+  password: 'mysecretpasswoopedy',
+  birthDate: new Date(1995, 11, 17)
 };
 const mockAuthCtx = {
   state: {},
@@ -48,7 +49,7 @@ const mockAuthCtx = {
         )
     }
   },
-  set: function(k, v) {
+  set: function (k, v) {
     this.req.headers[k] = v;
   }
 };
@@ -79,7 +80,7 @@ beforeAll(async done => {
 });
 
 test.skip('should log in', async done => {
-  await auth(mockAuthCtx, () => {});
+  await auth(mockAuthCtx, () => { });
   // console.log(mockAuthCtx);
   expect(true).toBeTruthy();
   done();
