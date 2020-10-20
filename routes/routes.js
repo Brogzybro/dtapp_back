@@ -540,7 +540,7 @@ router.delete('/shared-users/:user', auth, sharedUsers.remove);
  */
 router.delete('/shared-users', auth, sharedUsers.removeAll);
 
-router.get('/prediction', auth, prediction.getADiaSample);
+router.get('/prediction', auth, prediction.getPrediction);
 
 router.use(errors);
 

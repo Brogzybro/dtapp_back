@@ -4,7 +4,7 @@ const logger = require('../config').winston.loggers.defaultLogger;
 const sample = require('../controllers/samples_controller');
 const user = require('../controllers/user_controller');
 
-exports.getADiaSample = async ctx => {
+exports.getPrediction = async ctx => {
 
     //Variables from Fillips model
     let beta_0 = -15.139611;
