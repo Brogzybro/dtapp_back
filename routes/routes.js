@@ -33,11 +33,14 @@ const router = new Router();
  *        required:
  *          - password
  *          - username
+ *          - birthDate
  *        properties:
  *          username:
  *            type: string
  *          password:
  *            type: string
+ *          birthDate:
+ *            type: integer
  *      Type:
  *        description: Enum of all the different types of samples supported by the API.
  *        type: string
@@ -540,6 +543,21 @@ router.delete('/shared-users/:user', auth, sharedUsers.remove);
  */
 router.delete('/shared-users', auth, sharedUsers.removeAll);
 
+/**
+ * @swagger
+ *
+ * /prediction:
+ *    get:
+ *      security:
+ *        - basicAuth: []
+ *      description: Get a prediction
+ *      tags:
+ *        - prediction
+ *      responses:
+ *        default:
+ *          description: User must have logged Blood pressure
+ *          
+ */
 router.get('/prediction', auth, prediction.getPrediction);
 
 router.use(errors);
