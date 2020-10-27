@@ -17,7 +17,8 @@ it('shared with five users should return 5 users', async () => {
 
   const usersObjsThatShare = Helpers.generateArray(5, i => ({
     username: mockData.mockUser.username + i,
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   }));
   const usersThatShare = await Promise.all(
     usersObjsThatShare.map(userObj => Helpers.createUser(userObj))

@@ -21,7 +21,8 @@ describe('shared user', () => {
     const userThatShares = await Helpers.createUser(mockUser);
     const usersObjsToShareWith = [...Array(5)].map((_, i) => ({
       username: mockUser.username + i,
-      password: mockUser.password
+      password: mockUser.password,
+      birthDate: new Date(1995, 11, 17)
     }));
     const usersToShareWith = await Promise.all(
       usersObjsToShareWith.map(async userObj => Helpers.createUser(userObj))
@@ -44,7 +45,7 @@ describe('shared user', () => {
       sharedUser = await SharedUser.create({
         shared_with: userToShareWith
       });
-    } catch (error) {}
+    } catch (error) { }
     expect(sharedUser).toBeNull();
     done();
   });
@@ -57,7 +58,7 @@ describe('shared user', () => {
       sharedUser = await SharedUser.create({
         user: userThatShares
       });
-    } catch (error) {}
+    } catch (error) { }
     expect(sharedUser).toBeNull();
     done();
   });
@@ -67,7 +68,8 @@ describe('shared user', () => {
     const userThatShares = await Helpers.createUser(mockUser);
     const userToShareWith = await Helpers.createUser({
       username: mockUser.username + '2',
-      password: mockUser.password
+      password: mockUser.password,
+      birthDate: new Date(1995, 11, 17)
     });
     await SharedUser.create({
       user: userThatShares,

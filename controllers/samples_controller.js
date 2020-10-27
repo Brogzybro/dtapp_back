@@ -2,6 +2,7 @@ const Sample = require('../models/sample_model');
 const logger = require('../config').winston.loggers.defaultLogger;
 
 exports.list = async ctx => {
+  console.log(ctx);
   const { user } = ctx.state;
   const { type, startDate, endDate, limit, offset, source } = ctx.query;
 
@@ -9,20 +10,20 @@ exports.list = async ctx => {
 
   logger.info(
     'Sample request from user ' +
-      user +
-      '{type: ' +
-      type +
-      ', startDate: ' +
-      startDate +
-      ', endDate: ' +
-      endDate +
-      ', limit: ' +
-      limit +
-      ', offset: ' +
-      offset +
-      ', source: ' +
-      source +
-      '}'
+    user +
+    '{type: ' +
+    type +
+    ', startDate: ' +
+    startDate +
+    ', endDate: ' +
+    endDate +
+    ', limit: ' +
+    limit +
+    ', offset: ' +
+    offset +
+    ', source: ' +
+    source +
+    '}'
   );
 
   if (source) {

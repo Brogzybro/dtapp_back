@@ -8,12 +8,14 @@ const app = new testlib.AppTester();
 
 const testUser = {
   username: 'userblablablabla',
-  password: 'mysecretpasswoopedy'
+  password: 'mysecretpasswoopedy',
+  birthDate: new Date(1995, 11, 17)
 };
 
 const testUser2 = {
   username: 'userbla',
-  password: 'mysecretpasswoopedy'
+  password: 'mysecretpasswoopedy',
+  birthDate: new Date(1995, 11, 17)
 };
 
 describe('user controller group', () => {
@@ -39,7 +41,8 @@ describe('user controller group', () => {
       .send(testUser);
     const newUserDetails = {
       username: testUser.username,
-      password: 'mynewpassword'
+      password: 'mynewpassword',
+      birthDate: new Date(1995, 11, 17)
     };
     const result = await supertest(app.connection.server)
       .patch('/user')
@@ -55,7 +58,9 @@ describe('user controller group', () => {
       .send(testUser);
     const newUserDetails = {
       username: 'mynewusernameaylmao',
-      password: testUser.password
+      password: testUser.password,
+      birthDate: new Date(1995, 11, 17)
+
     };
     const result = await supertest(app.connection.server)
       .patch('/user')

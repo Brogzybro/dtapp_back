@@ -17,7 +17,8 @@ it('should remove user shared with', async () => {
   const userThatShares = await Helpers.createUser(mockData.mockUser);
   const usersObjsToShareWith = Helpers.generateArray(5, i => ({
     username: mockData.mockUser.username + i,
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   }));
   const usersToShareWith = await Promise.all(
     usersObjsToShareWith.map(userObj => Helpers.createUser(userObj))

@@ -21,7 +21,8 @@ it('Should fail for user not shared with', async done => {
   await userThatShares.save();
   const userThatRequestsObj = {
     username: mockData.mockUser.username + '2',
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   };
   await Helpers.createUser(userThatRequestsObj);
   const res = await supertest(app.connection.server)
@@ -39,7 +40,8 @@ it("Should get all devices from other user's test data (6 total)", async done =>
   await userThatShares.save();
   const userThatRequestsObj = {
     username: mockData.mockUser.username + '2',
-    password: mockData.mockUser.password
+    password: mockData.mockUser.password,
+    birthDate: new Date(1995, 11, 17)
   };
   const userThatRequests = await Helpers.createUser(userThatRequestsObj);
   await Helpers.createSharedUser(userThatShares, userThatRequests);

@@ -11,7 +11,7 @@
     "start": "node start.js",
     "dev": "nodemon start.js",
     "lint": "eslint .",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --watch",
     "swaggerjsdoc": "swagger-jsdoc -d swaggerDef.js -o dtapp_shared/swagger.json",
     "gendoc": "openapi-generator generate -i swagger.json -g html -o doc/test",
     "genapibase": "openapi-generator generate -i dtapp_shared/swagger.json -g dart -o dartapi/test",

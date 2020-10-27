@@ -15,7 +15,8 @@ const mockConfig = {
 
 const mockUser = {
   username: 'WithingsNewTokenUser',
-  password: 'WithingsNewTokenUserPassword'
+  password: 'WithingsNewTokenUserPassword',
+  birthDate: new Date(1995, 11, 17)
 };
 
 const mockTokenData = {
