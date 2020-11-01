@@ -21,15 +21,20 @@ exports.getPrediction = async ctx => {
         user: userId,
         type: 'diastolicBloodPressure'
     });
-
-
     const latestSys = await Sample.findLatest({
         user: userId,
         type: 'systolicBloodPressure'
     });
-    const z = beta_0 + age * beta_1 + latestSys.value * beta_2 + latestDia.value * beta_3;
-    const risk = 1 / (1 + Math.exp(-z));
-    const ret = { "systolic": latestSys.value, "diastolic": latestDia.value, "risk": risk };
-    ctx.body = ret;
-    const l = 4;
+
+    const ret = { "systolic": -1, "diastolic": -1, "risk": -1 };
+    if (latestDia == null || latestSys == null) {
+        ctx.body = ret;
+    } else {
+        const z = beta_0 + age * beta_1 + latestSys.value * beta_2 + latestDia.value * beta_3;
+        const risk = 1 / (1 + Math.exp(-z));
+        ret.systolic = latestSys.value;
+        ret.diastolic = latestDia.value;
+        ret.risk = risk;
+        ctx.body = ret;
+    }
 }
