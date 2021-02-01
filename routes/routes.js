@@ -14,6 +14,8 @@ const adminController = require('../controllers/admin_controller');
 const devicesController = require('../controllers/devices_controller');
 const sharedUsers = require('../controllers/shared_users_controller');
 const prediction = require('../controllers/prediction_controller');
+const certificate = require('../controllers/certificate_controller');
+const certificateAgreement = require('../controllers/certificate_user_agreement_controller');
 
 const router = new Router();
 
@@ -91,6 +93,63 @@ const router = new Router();
  *            type: string
  *          source:
  *            type: string
+ *      Certificate:
+ *        type: object
+ *        required:
+ *          - password
+ *          - title
+ *          - description
+ *          - email
+ *          - nameOfApplier
+ *          - reasonsForDataNeed
+ *        properties:
+ *          title:
+ *            type: string
+ *          password:
+ *            type: string
+ *          description:
+ *            type: string
+ *          email:
+ *            type: string
+ *          nameOfApplier:
+ *            type: string
+ *          reasonsForDataNeed:
+ *            type: string
+ *          age:
+ *            type: integer
+ *          diastolicBloodPressure:
+ *            type: integer
+ *          systolicBloodPressure:
+ *            type: integer
+ *          heartRate:
+ *            type: integer
+ *          distance:
+ *            type: integer
+ *          elevation:
+ *            type: integer
+ *          stepCount:
+ *            type: integer
+ *          sleep:
+ *            type: integer
+ *          ecg:
+ *            type: integer
+ *          wieght:
+ *            type: integer
+ *          fatFreeMass:
+ *            type: integer
+ *          fatRatio:
+ *            type: integer
+ *          fatMassWeight:
+ *            type: integer
+ *          bodyTemp:
+ *            type: integer
+ *          muscleMass:
+ *            type: integer
+ *          boneMass:
+ *            type: integer
+ *          pulseWaveVelocity:
+ *            type: integer
+ * 
  *
  * tags:
  *    - name: user
@@ -105,6 +164,10 @@ const router = new Router();
  *      description: Access devices owned by or shared with user
  *    - name: sharing
  *      description: Add and remove users shared with, as well as get lists of them
+ *    - name: prediction
+ *      description: Returns predictions
+ *    - name: certificate
+ *      description: Apply and use certificates to collect donated data
  */
 
 /**
@@ -573,6 +636,159 @@ router.delete('/shared-users', auth, sharedUsers.removeAll);
  *          
  */
 router.get('/prediction', auth, prediction.getPrediction);
+
+/**
+ * @swagger
+ *
+ * /certificate:
+ *    post:
+ *      description: Creates a new certificate
+ *      tags:
+ *        - certificate
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Certificate'
+ *      responses:
+ *        201:
+ *          description: Created, use your CertificateKey to get data.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  certificateKey:
+ *                    type: string
+ *            
+ *        400:
+ *          description: Other/Unknown
+ */
+router.post('/certificate', certificate.create);
+
+/**
+ * @swagger
+ *
+ * /certificate/data:
+ *    get:
+ *      description: Get data for certificate
+ *      tags:
+ *        - certificate
+ *      parameters:
+ *        - in: query
+ *          name: certificateKey
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: Your certificate key given when you submitted for a certificate
+ *      responses:
+ *        default:
+ *          description: List of sample data
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                items:
+ *                  $ref: '#/components/schemas/Sample'
+ */
+router.get('/certificate/data', certificate.getData);
+
+/**
+ * @swagger
+ *
+ * /certificate/approve:
+ *    patch:
+ *      description: Make certificate approved
+ *      tags:
+ *        - certificate
+ *      parameters:
+ *        - in: query
+ *          name: certificateKey
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: Certificate key of the certificate
+ *      responses:
+ *        default:
+ *          description: Certificate approved
+ *            
+ */
+router.patch('/certificate/approve', adminauth, certificate.approveCert);
+
+/**
+ * @swagger
+ *
+ * /certificate/disapprove:
+ *    patch:
+ *      description: Make certificate disapproved
+ *      tags:
+ *        - certificate
+ *      parameters:
+ *        - in: query
+ *          name: certificateKey
+ *          schema:
+ *            type: string
+ *          required: true
+ *          description: Certificate key of the certificate
+ *      responses:
+ *        default:
+ *          description: Certificate disapproved
+ *            
+ */
+router.patch('/certificate/disapprove', adminauth, certificate.disapproveCert);
+
+/**
+ * @swagger
+ *
+ * /certificate/agree:
+ *    post:
+ *      security:
+ *        - basicAuth: []
+ *      description: Agree to a certificate
+ *      tags:
+ *        - certificate
+ *      parameters:
+ *       - in: query
+ *         name: certificateKey
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Certificate key of the certificate
+ *      responses:
+ *        default:
+ *          description: User agreed to donate to certificate holder
+ *        200:
+ *          description: User agreed to donate to certificate holder
+ *                                    
+ */
+router.post('/certificate/agree', auth, certificateAgreement.create);
+
+/**
+ * @swagger
+ *
+ * /certificate/agree:
+ *    delete:
+ *      security:
+ *        - basicAuth: []
+ *      description: Delete an agreement
+ *      tags:
+ *        - certificate
+ *      parameters:
+ *       - in: query
+ *         name: certificateKey
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Certificate key of the certificate
+ *      responses:
+ *        default:
+ *          description: User deleted the agreement
+ *        200:
+ *          description: User deleted the agreement
+ *                                    
+ */
+router.delete('/certificate/agree', auth, certificateAgreement.delete);
 
 router.use(errors);
 
