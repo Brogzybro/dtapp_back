@@ -556,6 +556,20 @@ router.delete('/shared-users', auth, sharedUsers.removeAll);
  *      responses:
  *        default:
  *          description: User must have logged Blood pressure
+ *        200:
+ *          description: Risk based on diastolic and systolic blood pressure
+ *          content:  
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  systolic:
+ *                    type: integer
+ *                  diastolic: 
+ *                    type: integer
+ *                  risk:
+ *                    type: object
+ *                    
  *          
  */
 router.get('/prediction', auth, prediction.getPrediction);
