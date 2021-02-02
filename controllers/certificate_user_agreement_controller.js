@@ -1,5 +1,3 @@
-const Certificate = require('../models/certificate_model');
-const User = require('../models/user_model');
 const Agreement = require('../models/certificate_user_agreement_model');
 const logger = require('../config').winston.loggers.defaultLogger;
 
