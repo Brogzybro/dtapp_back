@@ -31,6 +31,10 @@ const CertificateObj = {
         type: String,
         required: [true, 'Reasons to fetch different data is required'],
     },
+    dataTypes: {
+        type: Array,
+        required: [true, 'Must ask for some data'],
+    },
     age: Boolean,
     diastolicBloodPressure: Boolean,
     systolicBloodPressure: Boolean,

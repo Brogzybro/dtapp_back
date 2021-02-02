@@ -115,41 +115,11 @@ const router = new Router();
  *            type: string
  *          reasonsForDataNeed:
  *            type: string
- *          age:
- *            type: integer
- *          diastolicBloodPressure:
- *            type: integer
- *          systolicBloodPressure:
- *            type: integer
- *          heartRate:
- *            type: integer
- *          distance:
- *            type: integer
- *          elevation:
- *            type: integer
- *          stepCount:
- *            type: integer
- *          sleep:
- *            type: integer
- *          ecg:
- *            type: integer
- *          wieght:
- *            type: integer
- *          fatFreeMass:
- *            type: integer
- *          fatRatio:
- *            type: integer
- *          fatMassWeight:
- *            type: integer
- *          bodyTemp:
- *            type: integer
- *          muscleMass:
- *            type: integer
- *          boneMass:
- *            type: integer
- *          pulseWaveVelocity:
- *            type: integer
- * 
+ *          dataTypes:
+ *            type: array
+ *            items:
+ *              type: string
+ *
  *
  * tags:
  *    - name: user
@@ -683,14 +653,19 @@ router.post('/certificate', certificate.create);
  *          required: true
  *          description: Your certificate key given when you submitted for a certificate
  *      responses:
- *        default:
+ *        default:  
+ *          description: Request accepted
+ *        200:
  *          description: List of sample data
  *          content:
  *            application/json:
  *              schema:
- *                type: object
- *                items:
- *                  $ref: '#/components/schemas/Sample'
+ *                  items:
+ *                    type: object
+ *        401:
+ *          description: Certificate is not approved
+ *        400:
+ *          description: No certificate found
  */
 router.get('/certificate/data', certificate.getData);
 
@@ -737,6 +712,53 @@ router.patch('/certificate/approve', adminauth, certificate.approveCert);
  *            
  */
 router.patch('/certificate/disapprove', adminauth, certificate.disapproveCert);
+
+/**
+ * @swagger
+ *
+ * /certificate/getAllApprovedCerts:
+ *    get:
+ *      description: Get all approved Certificates
+ *      tags:
+ *        - certificate
+ *      responses:
+ *        default:  
+ *          description: Request accepted
+ *        200:
+ *          description: List of Certificates
+ *          content:
+ *            application/json:
+ *              schema:
+ *                  items:
+ *                    $ref: '#/components/schemas/Certificate'
+ *        400:
+ *          description: No certificate found
+ */
+router.get('/certificate/getAllApprovedCerts', certificate.getAllApprovedCerts);
+
+/**
+ * @swagger
+ *
+ * /certificate/getAllDisapprovedCerts:
+ *    get:
+ *      description: Get all disapproved Certificates
+ *      tags:
+ *        - certificate
+ *      responses:
+ *        default:  
+ *          description: Request accepted
+ *        200:
+ *          description: List of Certificates
+ *          content:
+ *            application/json:
+ *              schema:
+ *                  items:
+ *                    $ref: '#/components/schemas/Certificate'
+ *        400:
+ *          description: No certificate found
+ */
+router.get('/certificate/getAllDisapprovedCerts', certificate.getAllDisapprovedCerts);
+
 
 /**
  * @swagger
