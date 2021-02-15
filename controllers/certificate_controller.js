@@ -3,6 +3,7 @@ const SampleModel = require('../models/sample_model');
 const UserAgreement = require('../models/certificate_user_agreement_model');
 const UserModel = require('../models/user_model');
 const logger = require('../config').winston.loggers.defaultLogger;
+const { query } = require('winston');
 
 exports.create = async ctx => {
     var requestBody = ctx.request.body;
@@ -110,9 +111,17 @@ exports.getData = async ctx => {  //TODO: find samples of type in certificate fo
                     });
                 }
             }
-            const samples = await SampleModel.find({ type: { $in: types } }).catch(errr => { // Gets all samples of the Types in types
+            const samplesQuery = SampleModel.find({ type: { $in: types } });
+            if (ctx.query.fromDate && ctx.query.toDate) {
+                let from = ctx.query.fromDate;
+                let to = ctx.query.toDate;
+                samplesQuery.where('created').gte(new Date(from));
+                samplesQuery.where('created').lte(new Date(to));
+            }
+            samples = await samplesQuery.catch(errr => { // Gets all samples of the Types in types
                 logger.error(errr);
             });
+
             if (samples) {
                 samples.forEach(sample => {
                     if (listOfUsers.indexOf(JSON.stringify(sample.user)) > -1) { // if the sample is from an agreed User it gets added to returnSamples list

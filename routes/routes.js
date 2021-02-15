@@ -633,7 +633,7 @@ router.get('/prediction', auth, prediction.getPrediction);
  *                    type: string
  *            
  *        400:
- *          description: Other/Unknown
+ *          description: Other/unkown
  */
 router.post('/certificate', certificate.create);
 
@@ -652,6 +652,16 @@ router.post('/certificate', certificate.create);
  *            type: string
  *          required: true
  *          description: Your certificate key given when you submitted for a certificate
+ *        - in: query
+ *          name: fromDate
+ *          schema: 
+ *            type: string
+ *          description: Dates as String format "YYYY-mm-dd"
+ *        - in: query
+ *          name: toDate
+ *          schema: 
+ *            type: string
+ *          description: Dates as String format "YYYY-mm-dd"
  *      responses:
  *        default:  
  *          description: Request accepted
@@ -665,7 +675,7 @@ router.post('/certificate', certificate.create);
  *        401:
  *          description: Certificate is not approved
  *        400:
- *          description: No certificate found
+ *          description: Bad request
  */
 router.get('/certificate/data', certificate.getData);
 
