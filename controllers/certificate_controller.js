@@ -86,7 +86,7 @@ exports.getData = async ctx => {  //TODO: find samples of type in certificate fo
     if (certificate) {
         var types = certificate.dataTypes;
         logger.info("Certificate.approved: " + certificate.approved);
-        if (certificate.approved === false) { //Certificate has not been approved by an admin
+        if (certificate.approved === false) { // Certificate has not been approved by an admin
             logger.info("Certificate: " + certificateId + " is not approved.");
             ctx.status = 201;
             return;
@@ -102,7 +102,7 @@ exports.getData = async ctx => {  //TODO: find samples of type in certificate fo
             });
             logger.info(listOfUsers);
 
-            if (types.indexOf("age") > -1) {
+            if (types.indexOf("age") > -1) { // if the Certificate asks for users age, add {UserId, age} to returnList
                 returnAge = await getListOfUsersAge(users);
                 if (returnAge) {
                     returnAge.forEach(obj => {
@@ -110,23 +110,23 @@ exports.getData = async ctx => {  //TODO: find samples of type in certificate fo
                     });
                 }
             }
-            const samples = await SampleModel.find({ type: { $in: types } }).catch(errr => {
+            const samples = await SampleModel.find({ type: { $in: types } }).catch(errr => { // Gets all samples of the Types in types
                 logger.error(errr);
             });
             if (samples) {
                 samples.forEach(sample => {
-                    if (listOfUsers.indexOf(JSON.stringify(sample.user)) > -1) {
+                    if (listOfUsers.indexOf(JSON.stringify(sample.user)) > -1) { // if the sample is from an agreed User it gets added to returnSamples list
                         returnSamples.push(sample);
                     }
                 });
                 logger.info("Found: " + samples.length + " and " + returnSamples.length + " samples from agreed users samples for certificateId: " + certificateId);
                 returnSamples.forEach(obj => {
-                    returnList.push(obj);
+                    returnList.push(obj); //adds all samples to return in returnList
                 });
             }
 
 
-            ctx.body = returnList;
+            ctx.body = returnList; // set returnList as response
             ctx.status = 200;
             return;
         }
